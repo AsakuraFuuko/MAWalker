@@ -2,8 +2,9 @@ package walker;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -530,17 +531,19 @@ public class Process {
         if (!f.exists()) {
             f.mkdirs();
         }
-		
+		try {
 		// System.out.println(docString);
 		File fp = new File(String.format("xml/%s %s.xml",
 				(new java.text.SimpleDateFormat("yyyy-MM-dd hh-mm-ss"))
 						.format(new Date()), className));
+		FileOutputStream fileOutput = new FileOutputStream(fp,true);
 		PrintWriter pfp;
-		try {
+		pfp = new PrintWriter(new OutputStreamWriter(fileOutput, "UTF-8"));
+
 			pfp = new PrintWriter(fp);
 			pfp.print(docString);
 			pfp.close();
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		//return docString;

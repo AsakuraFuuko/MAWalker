@@ -3,9 +3,10 @@ package walker;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -124,13 +125,14 @@ public class Go {
             f.mkdirs();
         }
 		// System.out.println(docString);
-        FileWriter fp;
+        File fp;
 		try {
-			fp = new FileWriter(String.format("log/%s.txt",
+			fp = new File(String.format("log/%s.txt",
 					(new java.text.SimpleDateFormat("yyyy-MM-dd"))
-							.format(new Date())),true);
+							.format(new Date())));
+			FileOutputStream fileOutput = new FileOutputStream(fp,true);
 			PrintWriter pfp;
-			pfp = new PrintWriter(fp);
+			pfp = new PrintWriter(new OutputStreamWriter(fileOutput, "UTF-8"));
 			pfp.print(log);
 			pfp.close();
 		} catch (IOException e1) {
