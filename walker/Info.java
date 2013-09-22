@@ -84,6 +84,10 @@ public class Info {
 	 * night mode 开关
 	 */
 	public static boolean nightModeSwitch = true;
+	/**
+	 * 保存log
+	 */
+	public static boolean saveLog = false;
 	
 	// 吃药相关的开关
 	public static boolean autoUseAp = true;
@@ -113,7 +117,7 @@ public class Info {
 	public static Deck PrivateFairyBattleRare = new Deck();
 	public static Deck FriendFairyBattleNormal = new Deck();
 	public static Deck LowerBCDeck = new Deck(); //舔妖卡组
-	
+
 	
 	// area
 	public Hashtable<Integer,Area> area;

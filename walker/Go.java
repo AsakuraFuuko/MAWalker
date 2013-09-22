@@ -104,14 +104,14 @@ public class Go {
 		if (!message.contains("\n")) {
 			System.out.print(String.format("%s> %s\n", df.format(new Date()),
 					message));// new Date()为获取当前系统时间
-			if (Info.debug)
+			if (Info.saveLog)
 				savelog(String.format("%s> %s\r\n", df.format(new Date()), message));
 			return;
 		}
 		for (String l : message.split("\n")) {
 			System.out.print(String.format("%s> %s\n", df.format(new Date()), l));// new
 																				// Date()为获取当前系统时间
-			if (Info.debug)
+			if (Info.saveLog)
 				savelog(String.format("%s> %s\r\n", df.format(new Date()), l));
 		}
 	}
