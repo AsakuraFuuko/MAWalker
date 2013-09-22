@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -181,7 +182,7 @@ public class Process {
 		// result.add(Action.GOTO_FLOOR);
 		if (!Process.info.OwnFairyBattleKilled){
 			try {
-				Thread.sleep(30000);
+				Thread.sleep(Random(30000, 45000)); //延时30~45秒
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -453,12 +454,22 @@ public class Process {
 			}
 			break;
 		case NOTHING:
-			Thread.sleep(30000); // 无事可做休息30秒
+			Thread.sleep(Random(30000, 45000)); // 无事可做休息30~45秒
 			break;
 		default:
 			break;
 		
 		}
+	}
+	
+	/**
+	 * 生成指定范围内的随机数
+	 * @param Min 最小值
+	 * @param Max 最大值
+	 * @return long类型的随机数
+	 */
+	public static long Random(long Min, long Max) {
+		return Math.round(Math.random() * (Max - Min) + Min);
 	}
 	
 	public static Document ParseXMLBytes1(byte[] in) throws Exception {
@@ -474,21 +485,21 @@ public class Process {
 		}
 	}
 	
-	public static Document ParseXMLBytes(byte[] in) throws Exception {
+	public static Document ParseXMLBytes(byte[] in,String className) throws Exception {
 		ByteArrayInputStream bais = null;
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			bais = new ByteArrayInputStream(in);
 			Document document = builder.parse(bais);
-			if(Info.debug) doc2FormatString(document); //输出xml
+			if(Info.debug) doc2FormatString(document,className); //输出xml
 			return document;
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 	
-	public static void doc2FormatString(Document doc) {	
+	public static void doc2FormatString(Document doc,String className) {	
 		String docString = "";
 		if(doc != null){
 			StringWriter stringWriter = new StringWriter();
@@ -520,15 +531,16 @@ public class Process {
             f.mkdirs();
         }
 		
-		//System.out.println(docString);
-		 File fp=new File(String.format("xml/%d.xml", System.currentTimeMillis()));
-	       PrintWriter pfp;
+		// System.out.println(docString);
+		File fp = new File(String.format("xml/%s %s.xml",
+				(new java.text.SimpleDateFormat("yyyy-MM-dd hh-mm-ss"))
+						.format(new Date()), className));
+		PrintWriter pfp;
 		try {
 			pfp = new PrintWriter(fp);
-		       pfp.print(docString);
-		       pfp.close();
+			pfp.print(docString);
+			pfp.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		//return docString;

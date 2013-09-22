@@ -45,7 +45,12 @@ public class PFBGood {
 			}
 
 			try {
-				doc = Process.ParseXMLBytes(response);
+				doc = Process.ParseXMLBytes(response, new Object() {
+					public String getClassName() {
+						String clazzName = this.getClass().getName();
+						return clazzName.substring(0, clazzName.lastIndexOf('$'));
+					}
+				}.getClassName()); //通过分析匿名类获得当前类名
 			} catch (Exception ex) {
 				ErrorData.currentDataType = ErrorData.DataType.bytes;
 				ErrorData.currentErrorType = ErrorData.ErrorType.FairyHistoryDataError;
@@ -133,7 +138,12 @@ public class PFBGood {
 		}
 
 		try {
-			doc = Process.ParseXMLBytes(response);
+			doc = Process.ParseXMLBytes(response, new Object() {
+				public String getClassName() {
+					String clazzName = this.getClass().getName();
+					return clazzName.substring(0, clazzName.lastIndexOf('$'));
+				}
+			}.getClassName()); //通过分析匿名类获得当前类名
 		} catch (Exception ex) {
 			ErrorData.currentDataType = ErrorData.DataType.bytes;
 			ErrorData.currentErrorType = ErrorData.ErrorType.PFB_GoodDataError;

@@ -1,6 +1,8 @@
 package action;
 
 
+import info.FairySelectUser;
+
 import java.util.ArrayList;
 
 import javax.xml.xpath.XPath;
@@ -58,7 +60,12 @@ public class Login {
 			throw ex;
 		}
 		try {
-			doc = Process.ParseXMLBytes(result);
+			doc = Process.ParseXMLBytes(result, new Object() {
+				public String getClassName() {
+					String clazzName = this.getClass().getName();
+					return clazzName.substring(0, clazzName.lastIndexOf('$'));
+				}
+			}.getClassName()); //通过分析匿名类获得当前类名
 		} catch (Exception ex) {
 			ErrorData.currentDataType = ErrorData.DataType.text;
 			ErrorData.currentErrorType = ErrorData.ErrorType.LoginDataError;
@@ -94,6 +101,10 @@ public class Login {
 			Process.info.userId = xpath.evaluate("//login/user_id", doc);
 			ParseUserDataInfo.parse(doc);
 			ParseCardList.parse(doc);
+			
+			Process.info.FairySelectUserList.put(Process.info.userId,
+					new FairySelectUser(Process.info.userId,
+							Process.info.username)); //添加自己到放妖的用户列表
 			
 			Process.info.SetTimeoutByAction(Name);
 			
