@@ -257,7 +257,7 @@ public class Think {
 			if (Info.OneAPOnly) Process.info.front = Process.info.floor.get(1);
 			// 判断是否可以行动
 			if (Process.info.front == null) Process.info.front = Process.info.floor.get(1);
-			if (Info.AllowBCInsuffient) return EXPLORE_URGENT; //强制跑图
+			if (Info.AllowBCInsuffient && Process.info.ap >= Process.info.front.cost) return EXPLORE_URGENT; //强制跑图
 			if (Process.info.ap < Process.info.front.cost) return Integer.MIN_VALUE;
 			if (Process.info.ap == Process.info.apMax) return EXPLORE_URGENT;
 		} catch (Exception ex) {
