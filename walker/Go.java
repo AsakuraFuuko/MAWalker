@@ -1,13 +1,17 @@
 package walker;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import walker.Info.EventType;
 import net.Crypto;
+import walker.Info.EventType;
 
 public class Go {
 
@@ -94,16 +98,43 @@ public class Go {
 	}
 
 	public static void log(String message) {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-		if (message == null || message.isEmpty()) return;
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+		if (message == null || message.isEmpty())
+			return;
 		if (!message.contains("\n")) {
-			System.out.print(df.format(new Date()));// new Date()为获取当前系统时间
-			System.out.println("> "+ message);
+			System.out.print(String.format("%s> %s\n", df.format(new Date()),
+					message));// new Date()为获取当前系统时间
+			if (Info.debug)
+				savelog(String.format("%s> %s\r\n", df.format(new Date()), message));
 			return;
 		}
 		for (String l : message.split("\n")) {
-			System.out.print(df.format(new Date()));
-			System.out.println("> "+ l);
+			System.out.print(String.format("%s> %s\n", df.format(new Date()), l));// new
+																				// Date()为获取当前系统时间
+			if (Info.debug)
+				savelog(String.format("%s> %s\r\n", df.format(new Date()), l));
+		}
+	}
+	
+	public static void savelog(String log)
+	{
+		File f=new File("log/");
+		// 创建文件夹
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+		// System.out.println(docString);
+        FileWriter fp;
+		try {
+			fp = new FileWriter(String.format("log/%s.txt",
+					(new java.text.SimpleDateFormat("yyyy-MM-dd"))
+							.format(new Date())),true);
+			PrintWriter pfp;
+			pfp = new PrintWriter(fp);
+			pfp.print(log);
+			pfp.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
 	

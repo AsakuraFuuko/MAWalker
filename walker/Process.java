@@ -82,7 +82,7 @@ public class Process {
 		ErrorData.clear();
 	}
 	
-	private List<Action> getPossibleAction() {
+	private List<Action> getPossibleAction() throws InterruptedException {
 		ArrayList<Action> result = new ArrayList<Action>();
 		if (info.events.size() != 0) {
 			switch(info.events.pop()) {
@@ -178,14 +178,14 @@ public class Process {
 			}				
 		}
 		result.add(Action.EXPLORE);
-		result.add(Action.USE);
+		if (Info.autoUseBc || Info.autoUseAp)
+			result.add(Action.USE);
 		// result.add(Action.GOTO_FLOOR);
 		if (!Process.info.OwnFairyBattleKilled){
 			try {
 				Thread.sleep(Random(30000, 45000)); //延时30~45秒
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				throw e1;
 			}
 			result.add(Action.GET_FAIRY_LIST);
 		}

@@ -155,7 +155,7 @@ public class Think {
 				}
 			}
 		}
-		return 0;
+		return Integer.MIN_VALUE;
 	}
 
 	private static boolean canBattle() {

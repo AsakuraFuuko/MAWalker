@@ -71,11 +71,6 @@ public class GetConfig {
 					Info.autoBcLow = Integer.parseInt(xpath.evaluate("/config/use/strategy/bc/low",doc));
 					Info.autoBcFullLow = Integer.parseInt(xpath.evaluate("/config/use/strategy/bc/full_low",doc));
 				}
-				
-				
-				
-				
-				
 
 				Info.FriendFairyBattleRare.No = xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleRare']/no", doc);
 				Info.FriendFairyBattleRare.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleRare']/bc", doc));
