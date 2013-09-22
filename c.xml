@@ -15,8 +15,8 @@
 		<debug>0</debug><!-- debug输出xml(开发者使用) -->
 	</option>
 	<use>
-		<auto_use_ap>1</auto_use_ap><!-- 自动吃AP药 -->
-		<auto_use_bc>1</auto_use_bc><!-- 自动吃BC药 -->
+		<auto_use_ap>0</auto_use_ap><!-- 自动吃AP药 -->
+		<auto_use_bc>0</auto_use_bc><!-- 自动吃BC药 -->
 		<strategy>
 			<ap>
 				<low>1</low><!-- 低于此值吃药 -->
@@ -41,6 +41,7 @@
 			GuildFairyDeck：打外敌用
 			FriendFairyBattleRare：打好友觉醒用
 			FriendFairyBattleNormal：打好友妖精用
+			LowerBCDeck：舔妖卡组
 		-->
 		<deck_profile>
 			<name>FairyDeck</name>
@@ -64,6 +65,11 @@
 		</deck_profile>
 		<deck_profile>
 			<name>FriendFairyBattleNormal</name>
+			<no>0</no>
+			<bc>0</bc>
+		</deck_profile>
+		<deck_profile>
+			<name>LowerBCDeck</name>
 			<no>0</no>
 			<bc>0</bc>
 		</deck_profile>

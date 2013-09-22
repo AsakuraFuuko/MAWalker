@@ -164,23 +164,38 @@ public class Think {
 			Process.info.fairy.No = Info.PublicFairyBattle.No;
 			break;
 		case 4:
-			if (!Info.AllowBCInsuffient && Process.info.bc < Info.FriendFairyBattleNormal.BC) return false;
-			Process.info.fairy.No = Info.FriendFairyBattleNormal.No;
+			if (Process.info.bc >= Info.LowerBCDeck.BC) {
+				if (Process.info.bc < Info.FriendFairyBattleNormal.BC) //如果小于则用舔妖卡组打
+				{
+					Process.info.fairy.No = Info.LowerBCDeck.No;
+				}
+				else
+				{
+					Process.info.fairy.No = Info.FriendFairyBattleNormal.No;
+				}
+			}
+			else
+				return false;
 			break;
 		case 5:
-			if (Info.RareFairyUseNormalDeck) {
-				if (!Info.AllowBCInsuffient && Process.info.bc < Info.FriendFairyBattleNormal.BC) return false;
-				Process.info.fairy.No = Info.FriendFairyBattleNormal.No;
-			} else {
-				if (!Info.AllowBCInsuffient && Process.info.bc < Info.FriendFairyBattleRare.BC) return false;
-				Process.info.fairy.No = Info.FriendFairyBattleRare.No;
+			if (Process.info.bc >= Info.LowerBCDeck.BC) {
+				if (Info.RareFairyUseNormalDeck || Process.info.bc < Info.FriendFairyBattleRare.BC)
+				{
+					Process.info.fairy.No = Info.LowerBCDeck.No;
+				}
+				else
+				{
+					Process.info.fairy.No = Info.FriendFairyBattleRare.No;
+				}
 			}
+			else
+				return false;
 			break;
 		case 6:
-			if (Process.info.bc >= Info.PrivateFairyBattleRare.BC) {
-				if (Process.info.bc < Info.PrivateFairyBattleNormal.BC) 
+			if (Process.info.bc >= Info.LowerBCDeck.BC) {
+				if (Process.info.bc < Info.PrivateFairyBattleNormal.BC) //如果小于则用舔妖卡组打
 				{
-					Process.info.fairy.No = Info.PrivateFairyBattleRare.No;
+					Process.info.fairy.No = Info.LowerBCDeck.No;
 				}
 				else
 				{
@@ -191,13 +206,18 @@ public class Think {
 				return false;
 			break;
 		case 7:
-			if (Info.RareFairyUseNormalDeck) {
-				if (!Info.AllowBCInsuffient && Process.info.bc < Info.PrivateFairyBattleNormal.BC) return false;	
-				Process.info.fairy.No = Info.PrivateFairyBattleNormal.No;
-			} else {
-				if (!Info.AllowBCInsuffient && Process.info.bc < Info.PrivateFairyBattleRare.BC) return false;	
-				Process.info.fairy.No = Info.PrivateFairyBattleRare.No;
+			if (Process.info.bc >= Info.LowerBCDeck.BC) {
+				if (Info.RareFairyUseNormalDeck || Process.info.bc < Info.PrivateFairyBattleRare.BC)
+				{
+					Process.info.fairy.No = Info.LowerBCDeck.No;
+				}
+				else
+				{
+					Process.info.fairy.No = Info.PrivateFairyBattleRare.No;
+				}
 			}
+			else
+				return false;
 			break;
 		default:
 			return false;
@@ -237,7 +257,7 @@ public class Think {
 			if (Info.OneAPOnly) Process.info.front = Process.info.floor.get(1);
 			// 判断是否可以行动
 			if (Process.info.front == null) Process.info.front = Process.info.floor.get(1);
-			if (!Info.AllowBCInsuffient && Process.info.bc < Info.PrivateFairyBattleNormal.BC) return Integer.MIN_VALUE;
+			if (!Info.AllowBCInsuffient && Process.info.bc < Info.LowerBCDeck.BC) return Integer.MIN_VALUE;
 			if (Process.info.ap < Process.info.front.cost) return Integer.MIN_VALUE;
 			if (Process.info.ap == Process.info.apMax) return EXPLORE_URGENT;
 		} catch (Exception ex) {

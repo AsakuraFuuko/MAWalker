@@ -92,6 +92,8 @@ public class GetConfig {
 				Info.PrivateFairyBattleRare.No = xpath.evaluate("/config/deck/deck_profile[name='RareFairyDeck']/no", doc);
 				Info.PrivateFairyBattleRare.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='RareFairyDeck']/bc", doc));
 				
+				Info.LowerBCDeck.No = xpath.evaluate("/config/deck/deck_profile[name='LowerBCDeck']/no", doc);
+				Info.LowerBCDeck.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='LowerBCDeck']/bc", doc));
 				
 				break;
 			case 2:

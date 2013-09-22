@@ -112,6 +112,7 @@ public class Info {
 	public static Deck PrivateFairyBattleNormal = new Deck();
 	public static Deck PrivateFairyBattleRare = new Deck();
 	public static Deck FriendFairyBattleNormal = new Deck();
+	public static Deck LowerBCDeck = new Deck(); //舔妖卡组
 	
 	
 	// area
