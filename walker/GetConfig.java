@@ -48,6 +48,7 @@ public class GetConfig {
 				else
 					Info.saveLog = xpath.evaluate("/config/option/savelog", doc).equals("1");
 				Info.nightModeSwitch = xpath.evaluate("/config/option/night_mode", doc).equals("1");
+				Info.receiveBattlePresent = xpath.evaluate("/config/option/receive_battle_present", doc).equals("1");
 				
 				Info.autoUseAp = xpath.evaluate("/config/use/auto_use_ap", doc).equals("1");
 				if (Info.autoUseAp) {

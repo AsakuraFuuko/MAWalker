@@ -533,14 +533,12 @@ public class Process {
         }
 		try {
 		// System.out.println(docString);
-		File fp = new File(String.format("xml/%s %s.xml",
-				(new java.text.SimpleDateFormat("yyyy-MM-dd hh-mm-ss"))
-						.format(new Date()), className));
-		FileOutputStream fileOutput = new FileOutputStream(fp,true);
-		PrintWriter pfp;
-		pfp = new PrintWriter(new OutputStreamWriter(fileOutput, "UTF-8"));
-
-			pfp = new PrintWriter(fp);
+			File fp = new File(String.format("xml/%s %s.xml",
+					(new java.text.SimpleDateFormat("yyyy-MM-dd hh-mm-ss"))
+							.format(new Date()), className));
+			FileOutputStream fileOutput = new FileOutputStream(fp, true);
+			PrintWriter pfp;
+			pfp = new PrintWriter(new OutputStreamWriter(fileOutput, "UTF-8"));
 			pfp.print(docString);
 			pfp.close();
 		} catch (IOException e) {
