@@ -7,6 +7,8 @@ import java.util.List;
 import action.ActionRegistry;
 import action.ActionRegistry.Action;
 
+import walker.Process;
+
 public class Think {
 	
 	private static final String AP_HALF = "101";
@@ -54,6 +56,16 @@ public class Think {
 				if (p > score) {
 					best = Action.EXPLORE;
 					score = p;
+				}
+				else
+				{
+					try {
+						Thread.sleep(Random(30000, 45000)); //延时30~45秒
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+					best = Action.GET_FAIRY_LIST;
+					score = GFL_PRI;
 				}
 				break;
 			case GUILD_BATTLE:
@@ -309,5 +321,13 @@ public class Think {
 		return false;
 		
 	}
-	
+	/**
+	 * 生成指定范围内的随机数
+	 * @param Min 最小值
+	 * @param Max 最大值
+	 * @return long类型的随机数
+	 */
+	public static long Random(long Min, long Max) {
+		return Math.round(Math.random() * (Max - Min) + Min);
+	}
 }
