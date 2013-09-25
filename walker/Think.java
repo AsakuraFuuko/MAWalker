@@ -70,7 +70,7 @@ public class Think {
 				else
 				{
 					try {
-						Thread.sleep(Random(30000, 45000)); //延时30~45秒
+						Thread.sleep(Random(20000, 30000)); //延时20~30秒
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
