@@ -14,6 +14,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -28,9 +29,11 @@ public class Network {
 	
 	public static String UserAgent = "";
 	private DefaultHttpClient client;
+	public CookieStore cookie;
 	
 	public Network() {
 		client = new DefaultHttpClient();
+		cookie = client.getCookieStore();
 		HttpParams hp = client.getParams();
 		hp.setParameter("http.socket.timeout", 0x7530);
 		hp.setParameter("http.connection.timeout", 0x7530);

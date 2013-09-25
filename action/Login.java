@@ -4,15 +4,18 @@ package action;
 import info.FairySelectUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.w3c.dom.Document;
 
 import walker.ErrorData;
+import walker.Go;
 import walker.Info;
 import walker.Process;
 
@@ -90,6 +93,21 @@ public class Login {
 				return false;
 			}
 			
+			//System.out.println("Post logon cookies:");
+			List<Cookie> cookies = Process.network.cookie.getCookies();
+			if (cookies.isEmpty()) {
+				System.out.println("None");
+			} else {
+				for (int i = 0; i < cookies.size(); i++) {
+					//System.out.println("- " + cookies.get(i).getName());
+					if (cookies.get(i).getName().equals("S")) {
+						//System.out.println("- " + cookies.get(i).getValue());
+						Info.sessionId = cookies.get(i).getValue();
+						Go.saveSessionId(Info.sessionId);
+					}
+				}
+			}
+	        
 			if (GuildDefeat.judge(doc)) {
 				return false;
 			}

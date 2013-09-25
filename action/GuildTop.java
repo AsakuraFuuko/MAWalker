@@ -78,8 +78,44 @@ public class GuildTop {
 			Process.info.gfairy.GuildId = xpath.evaluate("//fairy/discoverer_id", doc);
 			Process.info.gfairy.FairyLevel = xpath.evaluate("//fairy/lv", doc);
 			
-			Process.info.events.push(Info.EventType.guildBattle);
+			Process.info.gfairy.GuildTotalHP = Long.parseLong(xpath.evaluate("//fairy/hp_max", doc));
 			
+			if(Process.info.ticket <= 0)
+			{
+				return false;
+			}
+			if((boolean)xpath.evaluate("count(//force_gauge)>0", doc, XPathConstants.BOOLEAN))
+			{
+				Process.info.gfairy.OwnGuildHP = Long.parseLong(xpath.evaluate("//force_gauge/own", doc));
+				Process.info.gfairy.RivalGuildHP = Long.parseLong(xpath.evaluate("//force_gauge/rival", doc));
+				Process.info.gfairy.GuildTotalHP = Long.parseLong(xpath.evaluate("//force_gauge/total", doc));
+				double ora = (double)Process.info.gfairy.OwnGuildHP / (double)Process.info.gfairy.GuildTotalHP;
+				double rra = (double)Process.info.gfairy.RivalGuildHP / (double)Process.info.gfairy.GuildTotalHP;
+				if (Process.info.ticket <= Info.keepGuildBattleTicksts) {
+					if (ora > Info.GuildBattlePercent) {
+						ErrorData.currentDataType = ErrorData.DataType.text;
+						ErrorData.currentErrorType = ErrorData.ErrorType.none;
+						ErrorData.text = String.format(
+								"我方攻击的HP已超过设定%.2f比例，不继续攻击...",
+								Info.GuildBattlePercent);
+						return false;
+					} else if (rra > Info.GuildBattlePercent) {
+						ErrorData.currentDataType = ErrorData.DataType.text;
+						ErrorData.currentErrorType = ErrorData.ErrorType.none;
+						ErrorData.text = String.format(
+								"对方攻击的HP已超过设定%.2f比例，不继续攻击...",
+								Info.GuildBattlePercent);
+						return false;
+					}
+				}
+				else
+				{
+					Process.info.events.push(Info.EventType.guildBattle);
+					return true;
+				}
+			}
+			
+			Process.info.events.push(Info.EventType.guildBattle);
 			return true;
 		} catch (Exception ex) {
 			if (ErrorData.currentErrorType != ErrorData.ErrorType.none) throw ex;

@@ -95,6 +95,21 @@ public class Info {
 	 */
 	public static boolean receiveBattlePresent = true;
 	
+	/**
+	 * 判断外敌战胜利HP的比例(默认0.51)
+	 */
+	public static double GuildBattlePercent = 0.51;
+	
+	/**
+	 * 出击书保留数量(默认8张)
+	 */
+	public static int keepGuildBattleTicksts = 8;
+	
+	/**
+	 * cookie登陆的sessionId
+	 */
+	public static String sessionId = "";
+	
 	// 吃药相关的开关
 	public static boolean autoUseAp = true;
 	public static boolean autoUseBc = true;
@@ -238,7 +253,9 @@ public class Info {
 		needAPBCInfo,
 		levelUp,
 		PFBGood,
-		recvPFBGood, gotoFloor
+		recvPFBGood,
+		gotoFloor,
+		cookieLogin
 	}
 	public Stack<EventType> events;
 	
@@ -250,7 +267,7 @@ public class Info {
 		front = new Floor();
 		PFBGoodList = new Stack<PFBGood>();
 		events = new Stack<EventType>();
-		events.push(EventType.notLoggedIn);
+		events.push(EventType.cookieLogin);
 		KeepCard = new ArrayList<String>();
 		FairySelectUserList = new Hashtable<String,FairySelectUser>();
 		

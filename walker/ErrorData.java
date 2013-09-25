@@ -76,7 +76,11 @@ public class ErrorData {
 		RecvPFBGoodResponse,
 		// 吃药
 		UseDataError,
-		UseResponse
+		UseResponse,
+		// cookie登录
+		CookieLoginDataError,
+		CookieLoginDataParseError,
+		CookieLoginResponse
 	}
 	
 	

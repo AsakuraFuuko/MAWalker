@@ -27,8 +27,10 @@ public class Think {
 		int score = Integer.MIN_VALUE + 20;
 		for (int i = 0; i < possible.size(); i++) {
 			switch (possible.get(i)) {
+			case COOKIELOGIN:
+				return Action.COOKIELOGIN;
 			case LOGIN:
-				return ActionRegistry.Action.LOGIN;
+				return Action.LOGIN;
 			case ADD_AREA:
 				return Action.ADD_AREA;
 			case GET_FLOOR_INFO:

@@ -21,6 +21,7 @@ public class GetConfig {
 			Info.LoginId = xpath.evaluate("/config/username", doc);
 			Info.LoginPw = xpath.evaluate("/config/password", doc);
 			Network.UserAgent = xpath.evaluate("/config/user_agent", doc);
+			Info.sessionId = xpath.evaluate("/config/sessionId", doc);
 			
 			Info.Profile = Integer.parseInt(xpath.evaluate("/config/profile", doc));
 			
@@ -49,6 +50,9 @@ public class GetConfig {
 					Info.saveLog = xpath.evaluate("/config/option/savelog", doc).equals("1");
 				Info.nightModeSwitch = xpath.evaluate("/config/option/night_mode", doc).equals("1");
 				Info.receiveBattlePresent = xpath.evaluate("/config/option/receive_battle_present", doc).equals("1");
+				
+				Info.GuildBattlePercent = Double.parseDouble(xpath.evaluate("/config/option/guild_battle_percent", doc));
+				Info.keepGuildBattleTicksts = Integer.parseInt(xpath.evaluate("/config/option/keep_guild_battle_tickets", doc));
 				
 				Info.autoUseAp = xpath.evaluate("/config/use/auto_use_ap", doc).equals("1");
 				if (Info.autoUseAp) {

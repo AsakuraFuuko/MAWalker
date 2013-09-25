@@ -24,6 +24,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import walker.Info.TimeoutEntry;
 import action.ActionRegistry.Action;
 import action.AddArea;
+import action.CookieLogin;
 import action.Explore;
 import action.GetFairyList;
 import action.GetFairyReward;
@@ -87,6 +88,9 @@ public class Process {
 		ArrayList<Action> result = new ArrayList<Action>();
 		if (info.events.size() != 0) {
 			switch(info.events.pop()) {
+			case cookieLogin:
+				result.add(Action.COOKIELOGIN);
+				break;
 			case notLoggedIn:
 			case cookieOutOfDate:
 				result.add(Action.LOGIN);
@@ -98,7 +102,7 @@ public class Process {
 				result.add(Action.PRIVATE_FAIRY_BATTLE);
 				break;
 			case fairyReward:
-				if (info.ticket > 0) {
+				if (info.ticket>0) {
 					result.add(Action.GUILD_TOP);
 				} else if (info.ticket < 0) {
 					Go.log("Keep reward");
@@ -178,6 +182,8 @@ public class Process {
 				break;
 			}				
 		}
+		//
+		//if(Process.info.ticket>0) result.add(Action.GUILD_TOP);
 		result.add(Action.EXPLORE);
 		if (Info.autoUseBc || Info.autoUseAp)
 			result.add(Action.USE);
@@ -197,12 +203,36 @@ public class Process {
 	
 	private void execute(Action action) throws Exception {
 		switch (action) {
+		case COOKIELOGIN:
+			try {
+				if (CookieLogin.run()) {
+					Go.log(String
+							.format("Cookie Login User: %s, AP: %d/%d, BC: %d/%d, Card: %d/%d, ticket: %d, sessionId: %s",
+									info.username, info.ap, info.apMax,
+									info.bc, info.bcMax, info.cardList.size(),
+									info.cardMax, info.ticket, Info.sessionId));
+					info.events.push(Info.EventType.needFloorInfo);
+				} else {
+					Go.log(ErrorData.text);
+					Go.log("Cookie登录失败或已失效，使用普通方式登录...");
+					ErrorData.clear();
+					info.events.push(Info.EventType.notLoggedIn);
+				}
+			} catch (Exception ex) {
+				info.events.push(Info.EventType.cookieLogin);
+				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) {
+					throw ex;
+				}
+			}
+			break;
 		case LOGIN:
 			try {
 				if (Login.run()) {
-					Go.log(String.format("User: %s, AP: %d/%d, BC: %d/%d, Card: %d/%d, ticket: %d",
-							info.username, info.ap, info.apMax, info.bc, info.bcMax,
-							info.cardList.size(), info.cardMax, info.ticket));	
+					Go.log(String
+							.format("Normal Login User: %s, AP: %d/%d, BC: %d/%d, Card: %d/%d, ticket: %d, sessionId: %s",
+									info.username, info.ap, info.apMax,
+									info.bc, info.bcMax, info.cardList.size(),
+									info.cardMax, info.ticket, Info.sessionId));
 					info.events.push(Info.EventType.needFloorInfo);
 				} else {
 					info.events.push(Info.EventType.notLoggedIn);
@@ -359,8 +389,10 @@ public class Process {
 							break;
 						}
 					}
-					String str = String.format("PFB name=%s, Lv: %s, bc: %d/%d, ap: %d/%d, ticket: %d, week:%s, %s",
-							info.gfairy.FairyName, info.gfairy.FairyLevel, info.bc, info.bcMax, info.ap, info.apMax, 
+					double ora = (double)Process.info.gfairy.OwnGuildHP / (double)Process.info.gfairy.GuildTotalHP * 100;
+					double rra = (double)Process.info.gfairy.RivalGuildHP / (double)Process.info.gfairy.GuildTotalHP * 100;
+					String str = String.format("PFB name=%s, Lv: %s, %.2f%%/%.2f%%, bc: %d/%d, ap: %d/%d, ticket: %d, week:%s, %s",
+							info.gfairy.FairyName, info.gfairy.FairyLevel , ora, rra, info.bc, info.bcMax, info.ap, info.apMax, 
 							info.ticket, info.week, result);
 					Thread.sleep(5000);
 					Go.log(str);
@@ -374,7 +406,8 @@ public class Process {
 		case GUILD_TOP:
 			try {
 				if (GuildTop.run()) {
-					// nothing to do
+					Go.log(ErrorData.text);
+					ErrorData.clear();
 				} else {
 					if (info.NoFairy) Go.log("Night Mode");
 				}

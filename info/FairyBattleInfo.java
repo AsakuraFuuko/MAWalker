@@ -22,6 +22,11 @@ public class FairyBattleInfo {
 	public String FairyName = "";
 	public String FairyLevel = "";
 	public String Finder = "";
+	
+	//外敌相关
+	public long GuildTotalHP = 0;
+	public long OwnGuildHP = 0;
+	public long RivalGuildHP = 0;
 
 	public boolean equals(FairyBattleInfo b) {
 		return this.UserId.equals(b.UserId) && this.SerialId.equals(b.SerialId);
