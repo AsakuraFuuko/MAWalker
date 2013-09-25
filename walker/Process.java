@@ -102,10 +102,11 @@ public class Process {
 				result.add(Action.PRIVATE_FAIRY_BATTLE);
 				break;
 			case fairyReward:
-				if (info.ticket>0) {
+				if (info.ticket > 0) {
 					result.add(Action.GUILD_TOP);
-				} else if (info.ticket < 0) {
-					Go.log("Keep reward");
+				} else if (info.ticket < Info.keepGuildBattleTicksts) {
+					result.add(Action.GET_FAIRY_REWARD);
+					// Go.log("Keep reward");
 				} else {
 					result.add(Action.GET_FAIRY_REWARD);
 				}
