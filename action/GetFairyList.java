@@ -149,10 +149,12 @@ public class GetFairyList {
 			
 			if (fbis.size() > 1) Process.info.events.push(Info.EventType.fairyAppear); // 以便再次寻找
 			if (fbis.size() > 0) {
+				Process.info.fairy = new FairyBattleInfo(fbis.get(0));
 				Process.info.events.push(Info.EventType.gotoFloor);
 				Process.info.events.push(Info.EventType.recvPFBGood);
-				Process.info.events.push(Info.EventType.fairyCanBattle);
-				Process.info.fairy = new FairyBattleInfo(fbis.get(0));
+				if (!Process.info.fairy.UserId.equals(Process.info.userId)
+						|| Process.info.OwnFairyBattleKilled)
+					Process.info.events.push(Info.EventType.fairyCanBattle);
 			}
 			
 			NodeList fairy1 = (NodeList) xpath.evaluate(
