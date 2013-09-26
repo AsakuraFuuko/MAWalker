@@ -99,7 +99,32 @@ public class GetFairyList {
 					Process.info.FairySelectUserList.put(fsu.userID,fsu);
 				}
 			}
-		
+			
+			NodeList fairy1 = (NodeList) xpath.evaluate(
+					"//fairy_select/fairy_event[put_down=5]/fairy", doc,
+					XPathConstants.NODESET);
+
+			int aa = fairy1.getLength();
+
+			Go.log("找到" + aa + "个可赞的PFB...");
+			for (int i = 0; i < fairy1.getLength(); i++) {
+				Node f = fairy1.item(i).getFirstChild();
+				String serial_Id = "";
+				String user_Id = "";
+				do {
+					if (f.getNodeName().equals("serial_id")) {
+						serial_Id = f.getFirstChild().getNodeValue();
+					} else if (f.getNodeName().equals("discoverer_id")) {
+						user_Id = f.getFirstChild().getNodeValue();
+					}
+					f = f.getNextSibling();
+				} while (f != null);
+				Process.info.PFBGoodList.push(new info.PFBGood(serial_Id, user_Id));
+			}
+			if(!Process.info.PFBGoodList.isEmpty())
+			{
+				Process.info.events.push(Info.EventType.PFBGood);
+			}
 			
 			// TODO: 这两周先是只寻找0BC的，之后再扩展
 			//NodeList fairy = (NodeList)xpath.evaluate("//fairy_select/fairy_event[put_down=4]/fairy", doc, XPathConstants.NODESET);
@@ -150,36 +175,12 @@ public class GetFairyList {
 			
 			if (fbis.size() > 1) Process.info.events.push(Info.EventType.fairyAppear); // 以便再次寻找
 			if (fbis.size() > 0) {
+				Process.info.fairy = new FairyBattleInfo(fbis.get(0));
 				Process.info.events.push(Info.EventType.gotoFloor);
 				Process.info.events.push(Info.EventType.recvPFBGood);
-				Process.info.events.push(Info.EventType.fairyCanBattle);
-				Process.info.fairy = new FairyBattleInfo(fbis.get(0));
-			}
-			
-			NodeList fairy1 = (NodeList) xpath.evaluate(
-					"//fairy_select/fairy_event[put_down=5]/fairy", doc,
-					XPathConstants.NODESET);
-
-			int aa = fairy1.getLength();
-
-			Go.log("找到" + aa + "个可赞的PFB...");
-			for (int i = 0; i < fairy1.getLength(); i++) {
-				Node f = fairy1.item(i).getFirstChild();
-				String serial_Id = "";
-				String user_Id = "";
-				do {
-					if (f.getNodeName().equals("serial_id")) {
-						serial_Id = f.getFirstChild().getNodeValue();
-					} else if (f.getNodeName().equals("discoverer_id")) {
-						user_Id = f.getFirstChild().getNodeValue();
-					}
-					f = f.getNextSibling();
-				} while (f != null);
-				Process.info.PFBGoodList.push(new info.PFBGood(serial_Id, user_Id));
-			}
-			if(!Process.info.PFBGoodList.isEmpty())
-			{
-				Process.info.events.push(Info.EventType.PFBGood);
+				if (!Process.info.fairy.UserId.equals(Process.info.userId)
+						|| Process.info.OwnFairyBattleKilled)
+					Process.info.events.push(Info.EventType.fairyCanBattle);
 			}
 
 			Process.info.SetTimeoutByAction(Name);

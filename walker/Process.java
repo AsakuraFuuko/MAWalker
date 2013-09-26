@@ -92,11 +92,10 @@ public class Process {
 				result.add(Action.PRIVATE_FAIRY_BATTLE);
 				break;
 			case fairyReward:
-				if (info.ticket>0) {
+				if (info.ticket > 0) {
 					result.add(Action.GUILD_TOP);
-				} else if (info.ticket < 0) {
-					Go.log("Keep reward");
-				} else {
+				}
+				if (info.ticket < Info.keepGuildBattleTicksts) {
 					result.add(Action.GET_FAIRY_REWARD);
 				}
 				break;
@@ -180,7 +179,7 @@ public class Process {
 		// result.add(Action.GOTO_FLOOR);
 		if (!Process.info.OwnFairyBattleKilled){
 			try {
-				Thread.sleep(Random(30000, 45000)); //延时30~45秒
+				Thread.sleep(Random(20000, 30000)); //延时20~30秒
 			} catch (InterruptedException e1) {
 				throw e1;
 			}
