@@ -3,6 +3,8 @@ package walker;
 import java.util.ArrayList;
 import java.util.List;
 
+import frame.MainFrame;
+
 import walker.Info.TimeoutEntry;
 import action.ActionRegistry;
 import action.Explore;
@@ -123,13 +125,27 @@ public class Profile2 {
 		switch (action) {
 		case LOGIN:
 			try {
-				if (Login.run()) {
-					Go.log(String.format("User: %s, AP: %d/%d, BC: %d/%d, Card: %d/%d, ticket: %d",
-							Process.info.username, Process.info.ap, Process.info.apMax, Process.info.bc, Process.info.bcMax,
-							Process.info.cardList.size(), Process.info.cardMax, Process.info.ticket));	
+				switch (Login.run()) {
+				case 1: {
+					Go.log(String
+							.format("Normal Login User: %s, AP: %d/%d, BC: %d/%d, Card: %d/%d, ticket: %d, sessionId: %s",
+									Process.info.username, Process.info.ap, Process.info.apMax,
+									Process.info.bc, Process.info.bcMax, Process.info.cardList.size(),
+									Process.info.cardMax, Process.info.ticket, Config.sessionId));
+					MainFrame.Update();
 					Process.info.events.push(Info.EventType.needFloorInfo);
-				} else {
+				}
+					break;
+				case 0: {
 					Process.info.events.push(Info.EventType.notLoggedIn);
+				}
+					break;
+				case 2: {
+					Go.log("外敌战斗结果跳转...");
+					ErrorData.clear();
+					Process.info.events.push(Info.EventType.cookieLogin);
+				}
+					break;
 				}
 			} catch (Exception ex) {
 				Process.info.events.push(Info.EventType.notLoggedIn);

@@ -238,7 +238,8 @@ public class Process {
 			break;
 		case LOGIN:
 			try {
-				if (Login.run()) {
+				switch (Login.run()) {
+				case 1: {
 					Go.log(String
 							.format("Normal Login User: %s, AP: %d/%d, BC: %d/%d, Card: %d/%d, ticket: %d, sessionId: %s",
 									info.username, info.ap, info.apMax,
@@ -246,8 +247,18 @@ public class Process {
 									info.cardMax, info.ticket, Config.sessionId));
 					MainFrame.Update();
 					info.events.push(Info.EventType.needFloorInfo);
-				} else {
+				}
+					break;
+				case 0: {
 					info.events.push(Info.EventType.notLoggedIn);
+				}
+					break;
+				case 2: {
+					Go.log("外敌战斗结果跳转...");
+					ErrorData.clear();
+					info.events.push(Info.EventType.cookieLogin);
+				}
+					break;
 				}
 			} catch (Exception ex) {
 				info.events.push(Info.EventType.notLoggedIn);
