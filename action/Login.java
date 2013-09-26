@@ -14,6 +14,7 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.w3c.dom.Document;
 
+import walker.Config;
 import walker.ErrorData;
 import walker.Go;
 import walker.Info;
@@ -51,8 +52,8 @@ public class Login {
 			}
 		}
 		ArrayList<NameValuePair> al = new ArrayList<NameValuePair>();
-		al.add(new BasicNameValuePair("login_id",Info.LoginId));
-		al.add(new BasicNameValuePair("password",Info.LoginPw));
+		al.add(new BasicNameValuePair("login_id",Config.LoginId));
+		al.add(new BasicNameValuePair("password",Config.LoginPw));
 		try {
 			result = Process.network.ConnectToServer(URL_LOGIN, al,true);
 		} catch (Exception ex) {
@@ -102,8 +103,8 @@ public class Login {
 					//System.out.println("- " + cookies.get(i).getName());
 					if (cookies.get(i).getName().equals("S")) {
 						//System.out.println("- " + cookies.get(i).getValue());
-						Info.sessionId = cookies.get(i).getValue();
-						Go.saveSessionId(Info.sessionId);
+						Config.sessionId = cookies.get(i).getValue();
+						Config.saveSessionId(Config.sessionId, Go.configFile);
 					}
 				}
 			}

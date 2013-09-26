@@ -9,6 +9,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.http.NameValuePair;
 import org.w3c.dom.Document;
 
+import walker.Config;
 import walker.ErrorData;
 import walker.Info;
 import walker.Process;
@@ -91,20 +92,20 @@ public class GuildTop {
 				Process.info.gfairy.GuildTotalHP = Long.parseLong(xpath.evaluate("//force_gauge/total", doc));
 				double ora = (double)Process.info.gfairy.OwnGuildHP / (double)Process.info.gfairy.GuildTotalHP;
 				double rra = (double)Process.info.gfairy.RivalGuildHP / (double)Process.info.gfairy.GuildTotalHP;
-				if (Process.info.ticket <= Info.keepGuildBattleTicksts) {
-					if (ora > Info.GuildBattlePercent) {
+				if (Process.info.ticket <= Config.keepGuildBattleTicksts) {
+					if (ora > Config.GuildBattlePercent) {
 						ErrorData.currentDataType = ErrorData.DataType.text;
 						ErrorData.currentErrorType = ErrorData.ErrorType.none;
 						ErrorData.text = String.format(
 								"我方攻击的HP已超过设定%.2f比例，不继续攻击...",
-								Info.GuildBattlePercent);
+								Config.GuildBattlePercent);
 						return false;
-					} else if (rra > Info.GuildBattlePercent) {
+					} else if (rra > Config.GuildBattlePercent) {
 						ErrorData.currentDataType = ErrorData.DataType.text;
 						ErrorData.currentErrorType = ErrorData.ErrorType.none;
 						ErrorData.text = String.format(
 								"对方攻击的HP已超过设定%.2f比例，不继续攻击...",
-								Info.GuildBattlePercent);
+								Config.GuildBattlePercent);
 						return false;
 					}
 				}

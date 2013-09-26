@@ -3,7 +3,6 @@ package walker;
 
 import info.Area;
 import info.Card;
-import info.Deck;
 import info.FairyBattleInfo;
 import info.FairySelectUser;
 import info.Floor;
@@ -20,12 +19,7 @@ import action.ActionRegistry;
 
 public class Info {
 	// INFO: static variants are need to be configured in configure file
-	
-	// login info
-	public static String LoginId = "";
-	public static String LoginPw = "";
-	public static int Profile = 1;
-	
+
 	// user info
 	public String username = "";
 	public int ap = 0;
@@ -53,92 +47,10 @@ public class Info {
 	 * 自己放的妖是否被打死
 	 */
 	public boolean OwnFairyBattleKilled = true;
-	/**
-	 * 优先进行妖精战
-	 */
-	public static boolean FairyBattleFirst = true;
-	/**
-	 * 不使用狼舔觉醒
-	 */
-	public static boolean RareFairyUseNormalDeck = false;
-	/**
-	 * 允许deck不满足的情况下依旧走图和攻击
-	 */
-	public static boolean AllowBCInsuffient = false;
-	/**
-	 * 只走cost1的图
-	 */
-	public static boolean OneAPOnly = false;
-	/**
-	 * 自动加点
-	 */
-	public static boolean AutoAddp = true;
-	/**
-	 * 允许舔同一个怪
-	 */
-	public static boolean AllowAttackSameFairy = true;
-	/**
-	 * debug输出xml
-	 */
-	public static boolean debug = false;
-	/**
-	 * night mode 开关
-	 */
-	public static boolean nightModeSwitch = true;
-	/**
-	 * 保存log
-	 */
-	public static boolean saveLog = false;
-	
-	/**
-	 * 自动收集妖精战礼物
-	 */
-	public static boolean receiveBattlePresent = true;
-	
-	/**
-	 * 判断外敌战胜利HP的比例(默认0.51)
-	 */
-	public static double GuildBattlePercent = 0.51;
-	
-	/**
-	 * 出击书保留数量(默认8张)
-	 */
-	public static int keepGuildBattleTicksts = 8;
-	
-	/**
-	 * cookie登陆的sessionId
-	 */
-	public static String sessionId = "";
-	
-	// 吃药相关的开关
-	public static boolean autoUseAp = true;
-	public static boolean autoUseBc = true;
-	public enum autoUseType {
-		HALF_ONLY,
-		FULL_ONLY,
-		ALL
-	}
-	public static autoUseType autoApType = autoUseType.HALF_ONLY;
-	public static autoUseType autoBcType = autoUseType.HALF_ONLY;
-	public static int autoApLow = 1;
-	public static int autoBcLow = 50;
-	public static int autoApFullLow = 10;
-	public static int autoBcFullLow = 10;
 	
 	// card list
 	public ArrayList<Card> cardList;
-	public static ArrayList<String> CanBeSold = new ArrayList<String>();
-	public static ArrayList<String> KeepCard;
 	public String toSell = "";
-	
-	// deck
-	public static Deck FriendFairyBattleRare = new Deck();
-	public static Deck PublicFairyBattle = new Deck();
-	public static Deck PrivateFairyBattleNormal = new Deck();
-	public static Deck PrivateFairyBattleRare = new Deck();
-	public static Deck FriendFairyBattleNormal = new Deck();
-	public static Deck LowerBCDeck = new Deck(); //舔妖卡组
-
 	
 	// area
 	public Hashtable<Integer,Area> area;
@@ -268,7 +180,6 @@ public class Info {
 		PFBGoodList = new Stack<PFBGood>();
 		events = new Stack<EventType>();
 		events.push(EventType.cookieLogin);
-		KeepCard = new ArrayList<String>();
 		FairySelectUserList = new Hashtable<String,FairySelectUser>();
 		
 		timeout = new Hashtable<TimeoutEntry,Long>();

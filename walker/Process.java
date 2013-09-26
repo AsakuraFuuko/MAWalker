@@ -1,14 +1,7 @@
 package walker;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -17,9 +10,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import net.Network;
 
 import org.w3c.dom.Document;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 import walker.Info.TimeoutEntry;
 import action.ActionRegistry.Action;
@@ -58,7 +48,7 @@ public class Process {
 				execute(Think.doIt(getPossibleAction()));
 				long delta = System.currentTimeMillis() - start;
 				if (delta < 5000) Thread.sleep(5000 - delta);
-				if (Info.nightModeSwitch && info.events.empty() && info.NoFairy) Thread.sleep(600000); // 半夜速度慢点
+				if (Config.nightModeSwitch && info.events.empty() && info.NoFairy) Thread.sleep(600000); // 半夜速度慢点
 			}
 		} catch (Exception ex) {
 			throw ex;
@@ -138,7 +128,7 @@ public class Process {
 				result.add(Action.GOTO_FLOOR);
 				break;
 			case levelUp:
-				if (Info.AutoAddp == false) {
+				if (Config.AutoAddp == false) {
 					Go.log("自动加点已关闭");
 				} else {
 					result.add(Action.LV_UP);				
@@ -185,7 +175,7 @@ public class Process {
 		//
 		//if(Process.info.ticket>0) result.add(Action.GUILD_TOP);
 		result.add(Action.EXPLORE);
-		if (Info.autoUseBc || Info.autoUseAp)
+		if (Config.autoUseBc || Config.autoUseAp)
 			result.add(Action.USE);
 		// result.add(Action.GOTO_FLOOR);
 		if (!Process.info.OwnFairyBattleKilled){
@@ -196,7 +186,7 @@ public class Process {
 			}
 			result.add(Action.GET_FAIRY_LIST);
 		}
-		if (Info.FairyBattleFirst)
+		if (Config.FairyBattleFirst)
 			result.add(Action.GET_FAIRY_LIST);
 		return result;
 	}
@@ -210,7 +200,7 @@ public class Process {
 							.format("Cookie Login User: %s, AP: %d/%d, BC: %d/%d, Card: %d/%d, ticket: %d, sessionId: %s",
 									info.username, info.ap, info.apMax,
 									info.bc, info.bcMax, info.cardList.size(),
-									info.cardMax, info.ticket, Info.sessionId));
+									info.cardMax, info.ticket, Config.sessionId));
 					info.events.push(Info.EventType.needFloorInfo);
 				} else {
 					Go.log(ErrorData.text);
@@ -232,7 +222,7 @@ public class Process {
 							.format("Normal Login User: %s, AP: %d/%d, BC: %d/%d, Card: %d/%d, ticket: %d, sessionId: %s",
 									info.username, info.ap, info.apMax,
 									info.bc, info.bcMax, info.cardList.size(),
-									info.cardMax, info.ticket, Info.sessionId));
+									info.cardMax, info.ticket, Config.sessionId));
 					info.events.push(Info.EventType.needFloorInfo);
 				} else {
 					info.events.push(Info.EventType.notLoggedIn);
@@ -292,7 +282,7 @@ public class Process {
 						Go.log("No fairy found.");
 					}
 				} else {
-					if (Info.FairyBattleFirst) info.events.push(Info.EventType.fairyAppear);
+					if (Config.FairyBattleFirst) info.events.push(Info.EventType.fairyAppear);
 				}
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.ConnectionError) {
@@ -526,57 +516,11 @@ public class Process {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			bais = new ByteArrayInputStream(in);
 			Document document = builder.parse(bais);
-			if(Info.debug) doc2FormatString(document,className); //输出xml
+			if(Config.debug) Config.doc2FormatString(document,className); //输出xml
 			return document;
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 	
-	public static void doc2FormatString(Document doc,String className) {	
-		String docString = "";
-		if(doc != null){
-			StringWriter stringWriter = new StringWriter();
-			try{
-				OutputFormat format = new OutputFormat(doc,"UTF-8",true);
-				//format.setIndenting(true);//设置是否缩进，默认为true
-				//format.setIndent(4);//设置缩进字符数
-				//format.setPreserveSpace(false);//设置是否保持原来的格式,默认为 false
-				//format.setLineWidth(500);//设置行宽度
-				XMLSerializer serializer = new XMLSerializer(stringWriter,format);
-				serializer.asDOMSerializer();
-				serializer.serialize(doc);
-				docString = stringWriter.toString();
-			}catch(Exception e){
-				e.printStackTrace();
-			}finally{
-				if(stringWriter != null){
-		        	try {
-						stringWriter.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-	        	}
-			}
-		}
-		File f=new File("xml/");
-		// 创建文件夹
-        if (!f.exists()) {
-            f.mkdirs();
-        }
-		try {
-		// System.out.println(docString);
-			File fp = new File(String.format("xml/%s %s.xml",
-					(new java.text.SimpleDateFormat("yyyy-MM-dd hh-mm-ss"))
-							.format(new Date()), className));
-			FileOutputStream fileOutput = new FileOutputStream(fp, true);
-			PrintWriter pfp;
-			pfp = new PrintWriter(new OutputStreamWriter(fileOutput, "UTF-8"));
-			pfp.print(docString);
-			pfp.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		//return docString;
-	}
 }

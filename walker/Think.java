@@ -36,7 +36,7 @@ public class Think {
 			case GET_FLOOR_INFO:
 				return Action.GET_FLOOR_INFO;
 			case GET_FAIRY_LIST:
-				if (Info.FairyBattleFirst) {
+				if (Config.FairyBattleFirst) {
 					if (score < GFL_HI_PRI) {
 						best = Action.GET_FAIRY_LIST;
 						score = GFL_HI_PRI;
@@ -55,7 +55,7 @@ public class Think {
 				}
 				break;
 			case PRIVATE_FAIRY_BATTLE:
-				if (Info.Profile == 2) {
+				if (Config.Profile == 2) {
 					Process.info.fairy.No = "2";
 					return Action.PRIVATE_FAIRY_BATTLE;
 				}
@@ -79,7 +79,7 @@ public class Think {
 				}
 				break;
 			case GUILD_BATTLE:
-				Process.info.gfairy.No = Info.PublicFairyBattle.No;
+				Process.info.gfairy.No = Config.PublicFairyBattle.No;
 				return Action.GUILD_BATTLE;
 			case GUILD_TOP:
 				return Action.GUILD_TOP;
@@ -113,22 +113,22 @@ public class Think {
 	
 	private static int decideUse() {
 		
-		if (Info.autoUseAp) {
-			if (Process.info.ap < Info.autoApLow) {
-				switch (Info.autoApType) {
+		if (Config.autoUseAp) {
+			if (Process.info.ap < Config.autoApLow) {
+				switch (Config.autoApType) {
 				case ALL:
 					if (Process.info.halfApToday > 0 && Process.info.halfAp > 0) {
 						Process.info.toUse = AP_HALF;
 						return USE_PRI;
 					} else {
-						if (Process.info.fullAp > Info.autoApFullLow) {
+						if (Process.info.fullAp > Config.autoApFullLow) {
 							Process.info.toUse = AP_FULL;
 							return USE_PRI;
 						}
 					}
 					break;
 				case FULL_ONLY:
-					if (Process.info.fullAp > Info.autoApFullLow) {
+					if (Process.info.fullAp > Config.autoApFullLow) {
 						Process.info.toUse = AP_FULL;
 						return USE_PRI;
 					}
@@ -145,22 +145,22 @@ public class Think {
 				}
 			}
 		}
-		if (Info.autoUseBc) {
-			if (Process.info.bc < Info.autoBcLow) {
-				switch (Info.autoBcType) {
+		if (Config.autoUseBc) {
+			if (Process.info.bc < Config.autoBcLow) {
+				switch (Config.autoBcType) {
 				case ALL:
 					if (Process.info.halfBcToday > 0 && Process.info.halfBc > 0) {
 						Process.info.toUse = BC_HALF;
 						return USE_PRI;
 					} else {
-						if (Process.info.fullBc > Info.autoBcFullLow) {
+						if (Process.info.fullBc > Config.autoBcFullLow) {
 							Process.info.toUse = BC_FULL;
 							return USE_PRI;
 						}
 					}
 					break;
 				case FULL_ONLY:
-					if (Process.info.fullBc > Info.autoBcFullLow) {
+					if (Process.info.fullBc > Config.autoBcFullLow) {
 						Process.info.toUse = BC_FULL;
 						return USE_PRI;
 					}
@@ -183,59 +183,59 @@ public class Think {
 	private static boolean canBattle() {
 		switch (Process.info.fairy.Type) {
 		case 0:
-			Process.info.fairy.No = Info.PublicFairyBattle.No;
+			Process.info.fairy.No = Config.PublicFairyBattle.No;
 			break;
 		case 4:
-			if (Process.info.bc >= Info.LowerBCDeck.BC) {
-				if (Process.info.bc < Info.FriendFairyBattleNormal.BC) //如果小于则用舔妖卡组打
+			if (Process.info.bc >= Config.LowerBCDeck.BC) {
+				if (Process.info.bc < Config.FriendFairyBattleNormal.BC) //如果小于则用舔妖卡组打
 				{
-					Process.info.fairy.No = Info.LowerBCDeck.No;
+					Process.info.fairy.No = Config.LowerBCDeck.No;
 				}
 				else
 				{
-					Process.info.fairy.No = Info.FriendFairyBattleNormal.No;
+					Process.info.fairy.No = Config.FriendFairyBattleNormal.No;
 				}
 			}
 			else
 				return false;
 			break;
 		case 5:
-			if (Process.info.bc >= Info.LowerBCDeck.BC) {
-				if (Info.RareFairyUseNormalDeck || Process.info.bc < Info.FriendFairyBattleRare.BC)
+			if (Process.info.bc >= Config.LowerBCDeck.BC) {
+				if (Config.RareFairyUseNormalDeck || Process.info.bc < Config.FriendFairyBattleRare.BC)
 				{
-					Process.info.fairy.No = Info.LowerBCDeck.No;
+					Process.info.fairy.No = Config.LowerBCDeck.No;
 				}
 				else
 				{
-					Process.info.fairy.No = Info.FriendFairyBattleRare.No;
+					Process.info.fairy.No = Config.FriendFairyBattleRare.No;
 				}
 			}
 			else
 				return false;
 			break;
 		case 6:
-			if (Process.info.bc >= Info.LowerBCDeck.BC) {
-				if (Process.info.bc < Info.PrivateFairyBattleNormal.BC) //如果小于则用舔妖卡组打
+			if (Process.info.bc >= Config.LowerBCDeck.BC) {
+				if (Process.info.bc < Config.PrivateFairyBattleNormal.BC) //如果小于则用舔妖卡组打
 				{
-					Process.info.fairy.No = Info.LowerBCDeck.No;
+					Process.info.fairy.No = Config.LowerBCDeck.No;
 				}
 				else
 				{
-					Process.info.fairy.No = Info.PrivateFairyBattleNormal.No;
+					Process.info.fairy.No = Config.PrivateFairyBattleNormal.No;
 				}
 			}
 			else
 				return false;
 			break;
 		case 7:
-			if (Process.info.bc >= Info.LowerBCDeck.BC) {
-				if (Info.RareFairyUseNormalDeck || Process.info.bc < Info.PrivateFairyBattleRare.BC)
+			if (Process.info.bc >= Config.LowerBCDeck.BC) {
+				if (Config.RareFairyUseNormalDeck || Process.info.bc < Config.PrivateFairyBattleRare.BC)
 				{
-					Process.info.fairy.No = Info.LowerBCDeck.No;
+					Process.info.fairy.No = Config.LowerBCDeck.No;
 				}
 				else
 				{
-					Process.info.fairy.No = Info.PrivateFairyBattleRare.No;
+					Process.info.fairy.No = Config.PrivateFairyBattleRare.No;
 				}
 			}
 			else
@@ -248,11 +248,11 @@ public class Think {
 	}
 	
 	private static void decideUpPoint() {
-		if (Info.Profile == 1) {
+		if (Config.Profile == 1) {
 			//主号全加BC
 			Process.info.apUp = 0;
 			Process.info.bcUp = Process.info.pointToAdd;
-		} else if (Info.Profile == 2) {
+		} else if (Config.Profile == 2) {
 			//小号全加AP
 			Process.info.apUp = Process.info.pointToAdd;
 			Process.info.bcUp = 0;
@@ -261,7 +261,7 @@ public class Think {
 	
 	private static int explorePoint() {
 		try {
-			if (Info.Profile == 2) {
+			if (Config.Profile == 2) {
 				if (Process.info.ap < 1) return Integer.MIN_VALUE;
 				Process.info.front = Process.info.floor.get(1);
 				return EXPLORE_URGENT;
@@ -269,17 +269,17 @@ public class Think {
 			if (Process.info.bc == 0) return Integer.MIN_VALUE;
 			// 首先确定楼层
 			if (Process.info.AllClear) {
-				int ap = Process.info.ap / Process.info.bc * Info.PrivateFairyBattleNormal.BC;
+				int ap = Process.info.ap / Process.info.bc * Config.PrivateFairyBattleNormal.BC;
 				if (ap > 1) {
 					Process.info.front = Process.info.floor.get(ap);
 				} else {
 					Process.info.front = Process.info.floor.get(1);
 				}
 			}
-			if (Info.OneAPOnly) Process.info.front = Process.info.floor.get(1);
+			if (Config.OneAPOnly) Process.info.front = Process.info.floor.get(1);
 			// 判断是否可以行动
 			if (Process.info.front == null) Process.info.front = Process.info.floor.get(1);
-			if (Info.AllowBCInsuffient && Process.info.ap >= Process.info.front.cost) return EXPLORE_URGENT; //强制跑图
+			if (Config.AllowBCInsuffient && Process.info.ap >= Process.info.front.cost) return EXPLORE_URGENT; //强制跑图
 			if (Process.info.ap < Process.info.front.cost) return Integer.MIN_VALUE;
 			if (Process.info.ap == Process.info.apMax) return EXPLORE_URGENT;
 		} catch (Exception ex) {
@@ -289,11 +289,11 @@ public class Think {
 		return EXPLORE_NORMAL;
 	}
 	private static boolean cardsToSell() {
-		if (Info.Profile == 2) {
+		if (Config.Profile == 2) {
 			int count = 0;
 			String toSell = "";
 			for (Card c : Process.info.cardList) {
-				if (!Info.KeepCard.contains(c.serialId)) {
+				if (!Config.KeepCard.contains(c.serialId)) {
 					if (toSell.isEmpty()) {
 						toSell = c.serialId;
 					} else {
@@ -306,14 +306,14 @@ public class Think {
 			Process.info.toSell = toSell;
 			return false; // 测试状态
 			//return !toSell.isEmpty();
-		} else if (Info.Profile == 1) {
+		} else if (Config.Profile == 1) {
 			int count = 0;
 			String toSell = "";
 			for (Card c : Process.info.cardList) {
 				if (!c.exist) continue;
 				if (c.holo && c.hp >= 3500) continue; //闪卡不卖，但是低等级的闪卡照样要卖
 				if (c.hp > 6000) continue; //防止不小心把贵重卡片卖了 
-				if (Info.CanBeSold.contains(c.cardId)) {
+				if (Config.CanBeSold.contains(c.cardId)) {
 					if (toSell.isEmpty()) {
 						toSell = c.serialId;
 					} else {

@@ -1,45 +1,41 @@
 package frame;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Enumeration;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.JTextPane;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JToolBar;
-import javax.swing.UIManager;
 
-import java.awt.FlowLayout;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import java.awt.Dimension;
-import javax.swing.JTextField;
-import javax.swing.JSplitPane;
-
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Enumeration;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.JTextArea;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import walker.Config;
+import walker.Go;
+import walker.Info.EventType;
+import walker.Process;
+import walker.Profile2;
 
 public class MainFrame extends JFrame {
 
@@ -49,7 +45,11 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 4823802658310012975L;
 	private JPanel contentPane;
 	private JTextField textField;
-
+	public static JTextArea txtrLogtext;
+	public static Thread td;
+	private static JButton BUTTON_1;
+	private static JButton BUTTON;
+	public static boolean isExit = false;
 	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
 		//
 		// sets the default font for all Swing components.
@@ -104,6 +104,8 @@ public class MainFrame extends JFrame {
 				if (arg0.getButton() == MouseEvent.BUTTON1) {
 					OptionDialog od = new OptionDialog();
 					od.setVisible(true);
+					Go.log(String.format("加载了配置文件：%s\n",
+							Go.configFile));
 				}
 			}
 		});
@@ -193,16 +195,60 @@ public class MainFrame extends JFrame {
 		label_5.setBounds(110, 50, 34, 15);
 		panel_1.add(label_5);
 
-		JButton button = new JButton("启动");
-		button.setDoubleBuffered(true);
-		button.setBounds(641, 0, 60, 20);
-		panel_1.add(button);
+		BUTTON = new JButton("启动");
+		BUTTON.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				td = new Thread() {
+					public void run() {
+						while (!isExit) {
+							Process proc = new Process();
+							Profile2 prof = new Profile2();
+							while (!isExit) {
+								try {
+									switch (Config.Profile) {
+									case 1:
+										proc.auto();
+										break;
+									case 2:
+										prof.auto();
+										break;
+									}
+								} catch (Exception ex) {
+									Go.log(ex.getMessage());
+									Process.info.events
+											.add(EventType.cookieLogin);
+									Go.log("Restart");
+								}
+							}
+						}
+					}
+				};
+				isExit = false;
+				td.start();
+				Go.log("启动...");
+				BUTTON.setEnabled(false);
+				BUTTON_1.setEnabled(true);
+			}
+		});
+		BUTTON.setDoubleBuffered(true);
+		BUTTON.setBounds(641, 0, 60, 20);
+		panel_1.add(BUTTON);
 
-		JButton button_1 = new JButton("停止");
-		button_1.setDoubleBuffered(true);
-		button_1.setEnabled(false);
-		button_1.setBounds(641, 25, 60, 20);
-		panel_1.add(button_1);
+		BUTTON_1 = new JButton("停止");
+		BUTTON_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(td.isAlive()){
+					isExit = true;
+				}
+				Go.log("停止...");
+				BUTTON.setEnabled(true);
+				BUTTON_1.setEnabled(false);
+			}
+		});
+		BUTTON_1.setDoubleBuffered(true);
+		BUTTON_1.setEnabled(false);
+		BUTTON_1.setBounds(641, 25, 60, 20);
+		panel_1.add(BUTTON_1);
 
 		JLabel lblNewLabel_3 = new JLabel("1000000000");
 		lblNewLabel_3.setBounds(145, 50, 76, 15);
@@ -218,7 +264,7 @@ public class MainFrame extends JFrame {
 		gbc_scrollPane.gridy = 1;
 		panel.add(scrollPane, gbc_scrollPane);
 
-		final JTextArea txtrLogtext = new JTextArea();
+		txtrLogtext = new JTextArea();
 		txtrLogtext.setLineWrap(true);
 		txtrLogtext.setDoubleBuffered(true);
 		txtrLogtext.setEditable(false);

@@ -22,12 +22,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpParams;
 
+import walker.Config;
+
 
 public class Network {
 	private static final String Auth = "eWa25vrE";
 	private static final String Key = "2DbcAh3G";
-	
-	public static String UserAgent = "";
+
 	private DefaultHttpClient client;
 	public CookieStore cookie;
 	
@@ -57,7 +58,7 @@ public class Network {
 		List<NameValuePair> post = RequestProcess(content,UseDefaultKey);
 		
 		HttpPost hp = new HttpPost(url);
-		hp.setHeader("User-Agent", UserAgent);
+		hp.setHeader("User-Agent", Config.UserAgent);
 		hp.setHeader("Accept-Encoding", "gzip, deflate");
 		hp.setEntity(new UrlEncodedFormEntity(post,"UTF-8"));
 		

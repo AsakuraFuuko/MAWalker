@@ -6,8 +6,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import net.Network;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -18,106 +16,106 @@ public class GetConfig {
 			XPathFactory factory = XPathFactory.newInstance();
 			XPath xpath = factory.newXPath();
 			
-			Info.LoginId = xpath.evaluate("/config/username", doc);
-			Info.LoginPw = xpath.evaluate("/config/password", doc);
-			Network.UserAgent = xpath.evaluate("/config/user_agent", doc);
-			Info.sessionId = xpath.evaluate("/config/sessionId", doc);
+			Config.LoginId = xpath.evaluate("/config/username", doc);
+			Config.LoginPw = xpath.evaluate("/config/password", doc);
+			Config.UserAgent = xpath.evaluate("/config/user_agent", doc);
+			Config.sessionId = xpath.evaluate("/config/sessionId", doc);
 			
-			Info.Profile = Integer.parseInt(xpath.evaluate("/config/profile", doc));
+			Config.Profile = Integer.parseInt(xpath.evaluate("/config/profile", doc));
 			
-			switch (Info.Profile) {
+			switch (Config.Profile) {
 			case 1:
 				NodeList idl = (NodeList)xpath.evaluate("/config/sell_card/id", doc, XPathConstants.NODESET);
-				Info.CanBeSold = new ArrayList<String>();
+				Config.CanBeSold = new ArrayList<String>();
 				for (int i = 0; i< idl.getLength(); i++) {
 					Node idx = idl.item(i);
 					try {
-						Info.CanBeSold.add(idx.getFirstChild().getNodeValue());
+						Config.CanBeSold.add(idx.getFirstChild().getNodeValue());
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
 				}
-				Info.FairyBattleFirst = xpath.evaluate("/config/option/fairy_battle_first", doc).equals("1");
-				Info.RareFairyUseNormalDeck = xpath.evaluate("/config/option/rare_fairy_use_normal_deck", doc).equals("1");
-				Info.AllowBCInsuffient = xpath.evaluate("/config/option/allow_bc_insuffient", doc).equals("1");
-				Info.OneAPOnly = xpath.evaluate("/config/option/one_ap_only", doc).equals("1");
-				Info.AutoAddp = xpath.evaluate("/config/option/auto_add_point", doc).equals("1");
-				Info.AllowAttackSameFairy = xpath.evaluate("/config/option/allow_attack_same_fairy", doc).equals("1");
-				Info.debug = xpath.evaluate("/config/option/debug", doc).equals("1");
-				if (Info.debug) //当debug为true时强制启用
-					Info.saveLog = true;
+				Config.FairyBattleFirst = xpath.evaluate("/config/option/fairy_battle_first", doc).equals("1");
+				Config.RareFairyUseNormalDeck = xpath.evaluate("/config/option/rare_fairy_use_normal_deck", doc).equals("1");
+				Config.AllowBCInsuffient = xpath.evaluate("/config/option/allow_bc_insuffient", doc).equals("1");
+				Config.OneAPOnly = xpath.evaluate("/config/option/one_ap_only", doc).equals("1");
+				Config.AutoAddp = xpath.evaluate("/config/option/auto_add_point", doc).equals("1");
+				Config.AllowAttackSameFairy = xpath.evaluate("/config/option/allow_attack_same_fairy", doc).equals("1");
+				Config.debug = xpath.evaluate("/config/option/debug", doc).equals("1");
+				if (Config.debug) //当debug为true时强制启用
+					Config.saveLog = true;
 				else
-					Info.saveLog = xpath.evaluate("/config/option/savelog", doc).equals("1");
-				Info.nightModeSwitch = xpath.evaluate("/config/option/night_mode", doc).equals("1");
-				Info.receiveBattlePresent = xpath.evaluate("/config/option/receive_battle_present", doc).equals("1");
+					Config.saveLog = xpath.evaluate("/config/option/savelog", doc).equals("1");
+				Config.nightModeSwitch = xpath.evaluate("/config/option/night_mode", doc).equals("1");
+				Config.receiveBattlePresent = xpath.evaluate("/config/option/receive_battle_present", doc).equals("1");
 				
-				Info.GuildBattlePercent = Double.parseDouble(xpath.evaluate("/config/option/guild_battle_percent", doc));
-				Info.keepGuildBattleTicksts = Integer.parseInt(xpath.evaluate("/config/option/keep_guild_battle_tickets", doc));
+				Config.GuildBattlePercent = Double.parseDouble(xpath.evaluate("/config/option/guild_battle_percent", doc));
+				Config.keepGuildBattleTicksts = Integer.parseInt(xpath.evaluate("/config/option/keep_guild_battle_tickets", doc));
 				
-				Info.autoUseAp = xpath.evaluate("/config/use/auto_use_ap", doc).equals("1");
-				if (Info.autoUseAp) {
+				Config.autoUseAp = xpath.evaluate("/config/use/auto_use_ap", doc).equals("1");
+				if (Config.autoUseAp) {
 					String half = xpath.evaluate("/config/use/strategy/ap/half", doc);
 					if (half.equals("0")) {
-						Info.autoApType = Info.autoUseType.FULL_ONLY;
+						Config.autoApType = Config.autoUseType.FULL_ONLY;
 					} else if (half.equals("1")) {
-						Info.autoApType = Info.autoUseType.HALF_ONLY;
+						Config.autoApType = Config.autoUseType.HALF_ONLY;
 					} else {
-						Info.autoApType = Info.autoUseType.ALL;
+						Config.autoApType = Config.autoUseType.ALL;
 					}
-					Info.autoApLow = Integer.parseInt(xpath.evaluate("/config/use/strategy/ap/low",doc));
-					Info.autoApFullLow = Integer.parseInt(xpath.evaluate("/config/use/strategy/ap/full_low",doc));
+					Config.autoApLow = Integer.parseInt(xpath.evaluate("/config/use/strategy/ap/low",doc));
+					Config.autoApFullLow = Integer.parseInt(xpath.evaluate("/config/use/strategy/ap/full_low",doc));
 				}
-				Info.autoUseBc = xpath.evaluate("/config/use/auto_use_bc", doc).equals("1");
-				if (Info.autoUseBc) {
+				Config.autoUseBc = xpath.evaluate("/config/use/auto_use_bc", doc).equals("1");
+				if (Config.autoUseBc) {
 					String half = xpath.evaluate("/config/use/strategy/bc/half", doc);
 					if (half.equals("0")) {
-						Info.autoBcType = Info.autoUseType.FULL_ONLY;
+						Config.autoBcType = Config.autoUseType.FULL_ONLY;
 					} else if (half.equals("1")) {
-						Info.autoBcType = Info.autoUseType.HALF_ONLY;
+						Config.autoBcType = Config.autoUseType.HALF_ONLY;
 					} else {
-						Info.autoBcType = Info.autoUseType.ALL;
+						Config.autoBcType = Config.autoUseType.ALL;
 					}
-					Info.autoBcLow = Integer.parseInt(xpath.evaluate("/config/use/strategy/bc/low",doc));
-					Info.autoBcFullLow = Integer.parseInt(xpath.evaluate("/config/use/strategy/bc/full_low",doc));
+					Config.autoBcLow = Integer.parseInt(xpath.evaluate("/config/use/strategy/bc/low",doc));
+					Config.autoBcFullLow = Integer.parseInt(xpath.evaluate("/config/use/strategy/bc/full_low",doc));
 				}
 
-				Info.FriendFairyBattleRare.No = xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleRare']/no", doc);
-				Info.FriendFairyBattleRare.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleRare']/bc", doc));
+				Config.FriendFairyBattleRare.No = xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleRare']/no", doc);
+				Config.FriendFairyBattleRare.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleRare']/bc", doc));
 				
-				Info.FriendFairyBattleNormal.No = xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleNormal']/no", doc);
-				Info.FriendFairyBattleNormal.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleNormal']/bc", doc));
+				Config.FriendFairyBattleNormal.No = xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleNormal']/no", doc);
+				Config.FriendFairyBattleNormal.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleNormal']/bc", doc));
 				
-				Info.PublicFairyBattle.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='GuildFairyDeck']/bc", doc));
-				Info.PublicFairyBattle.No = xpath.evaluate("/config/deck/deck_profile[name='GuildFairyDeck']/no", doc);
+				Config.PublicFairyBattle.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='GuildFairyDeck']/bc", doc));
+				Config.PublicFairyBattle.No = xpath.evaluate("/config/deck/deck_profile[name='GuildFairyDeck']/no", doc);
 
-				Info.PrivateFairyBattleNormal.No = xpath.evaluate("/config/deck/deck_profile[name='FairyDeck']/no", doc);
-				Info.PrivateFairyBattleNormal.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='FairyDeck']/bc", doc));
+				Config.PrivateFairyBattleNormal.No = xpath.evaluate("/config/deck/deck_profile[name='FairyDeck']/no", doc);
+				Config.PrivateFairyBattleNormal.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='FairyDeck']/bc", doc));
 				
-				Info.PrivateFairyBattleRare.No = xpath.evaluate("/config/deck/deck_profile[name='RareFairyDeck']/no", doc);
-				Info.PrivateFairyBattleRare.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='RareFairyDeck']/bc", doc));
+				Config.PrivateFairyBattleRare.No = xpath.evaluate("/config/deck/deck_profile[name='RareFairyDeck']/no", doc);
+				Config.PrivateFairyBattleRare.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='RareFairyDeck']/bc", doc));
 				
-				Info.LowerBCDeck.No = xpath.evaluate("/config/deck/deck_profile[name='LowerBCDeck']/no", doc);
-				Info.LowerBCDeck.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='LowerBCDeck']/bc", doc));
+				Config.LowerBCDeck.No = xpath.evaluate("/config/deck/deck_profile[name='LowerBCDeck']/no", doc);
+				Config.LowerBCDeck.BC = Integer.parseInt(xpath.evaluate("/config/deck/deck_profile[name='LowerBCDeck']/bc", doc));
 				
 				break;
 			case 2:
 				
-				Info.OneAPOnly = true;
-				Info.AllowBCInsuffient = true;
-				Info.FairyBattleFirst = false;
-				Info.RareFairyUseNormalDeck = false;
+				Config.OneAPOnly = true;
+				Config.AllowBCInsuffient = true;
+				Config.FairyBattleFirst = false;
+				Config.RareFairyUseNormalDeck = false;
 				
-				Info.FriendFairyBattleRare.No = "0";
-				Info.FriendFairyBattleRare.BC = 0;
+				Config.FriendFairyBattleRare.No = "0";
+				Config.FriendFairyBattleRare.BC = 0;
 				
-				Info.PublicFairyBattle.BC = 0;
-				Info.PublicFairyBattle.No = "0";
+				Config.PublicFairyBattle.BC = 0;
+				Config.PublicFairyBattle.No = "0";
 
-				Info.PrivateFairyBattleNormal.No = "1";
-				Info.PrivateFairyBattleNormal.BC = 97;
+				Config.PrivateFairyBattleNormal.No = "1";
+				Config.PrivateFairyBattleNormal.BC = 97;
 				
-				Info.PrivateFairyBattleRare.No = "2";
-				Info.PrivateFairyBattleRare.BC = 2;
+				Config.PrivateFairyBattleRare.No = "2";
+				Config.PrivateFairyBattleRare.BC = 2;
 				
 				break;
 			}

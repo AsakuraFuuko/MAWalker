@@ -11,6 +11,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.w3c.dom.Document;
 
+import walker.Config;
 import walker.ErrorData;
 import walker.Info;
 import walker.Process;
@@ -38,9 +39,9 @@ public class CookieLogin {
 		Document doc;
 		if (!jump) {
 			try {
-				if(!Info.sessionId.isEmpty())
+				if(!Config.sessionId.isEmpty())
 				{
-					BasicClientCookie c = new BasicClientCookie("S",Info.sessionId);
+					BasicClientCookie c = new BasicClientCookie("S",Config.sessionId);
 					c.setDomain("web.million-arthurs.com");
 					c.setPath("/");
 					Process.network.cookie.addCookie(c);

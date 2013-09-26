@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import walker.Config;
 import walker.ErrorData;
 import walker.Go;
 import walker.Info;
@@ -74,7 +75,7 @@ public class GetFairyList {
 			}
 			
 			if (!xpath.evaluate("//remaining_rewards", doc).equals("0")) {
-				if (Info.receiveBattlePresent) {
+				if (Config.receiveBattlePresent) {
 					Process.info.events.push(Info.EventType.fairyReward);
 				}
 			}
@@ -128,7 +129,7 @@ public class GetFairyList {
 					}
 					f = f.getNextSibling();
 				} while (f != null);
-				if (Info.AllowAttackSameFairy) {
+				if (Config.AllowAttackSameFairy) {
 					fbis.add(fbi);
 				} else {
 					for (FairyBattleInfo bi : Process.info.LatestFairyList) {

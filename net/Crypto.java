@@ -2,12 +2,15 @@ package net;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-import javax.crypto.*;
-import javax.crypto.spec.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.codec.binary.*;
+import org.apache.commons.codec.binary.Base64;
 
-import walker.Info;
+import walker.Config;
 
 public class Crypto {
 	private static final String BaseSecretKey = "uH9JF2cHf6OppaC1";
@@ -17,7 +20,7 @@ public class Crypto {
 	
 	private static String GetSecretKey(boolean useLoginId) {
 		String pw = BaseSecretKey;
-		if (useLoginId) pw += Info.LoginId;
+		if (useLoginId) pw += Config.LoginId;
 		while(pw.length() < 32) pw += "0";
 		return pw;
 	}
