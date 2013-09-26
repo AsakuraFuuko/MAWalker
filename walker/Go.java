@@ -110,6 +110,7 @@ public class Go {
 					message);
 			System.out.print(str);// new Date()为获取当前系统时间
 			MainFrame.txtrLogtext.append(str);
+			MainFrame.txtrLogtext.setCaretPosition(MainFrame.txtrLogtext.getText().length());
 			if (Config.saveLog)
 				Config.savelog(str);
 			return;
@@ -118,6 +119,7 @@ public class Go {
 			String str = String.format("%s> %s\r\n", df.format(new Date()), l);
 			System.out.print(str);
 			MainFrame.txtrLogtext.append(str);
+			MainFrame.txtrLogtext.setCaretPosition(MainFrame.txtrLogtext.getText().length());
 			if (Config.saveLog)
 				Config.savelog(str);
 		}

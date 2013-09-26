@@ -724,7 +724,8 @@ public class OptionDialog extends JDialog {
 			textPane.setBounds(10, 25, 103, 66);
 			panel_111.add(textPane);
 		}
-		if (!Go.configFile.isEmpty()) {
+
+		if (Go.configFile != null && !Go.configFile.isEmpty()) {
 			configPath.setText(Go.configFile);
 			try {
 				GetConfig.parse(Process.ParseXMLBytes1(Config

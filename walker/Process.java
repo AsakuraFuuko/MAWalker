@@ -11,6 +11,8 @@ import net.Network;
 
 import org.w3c.dom.Document;
 
+import frame.MainFrame;
+
 import walker.Info.TimeoutEntry;
 import action.ActionRegistry.Action;
 import action.AddArea;
@@ -95,7 +97,7 @@ public class Process {
 				if (info.ticket > 0) {
 					result.add(Action.GUILD_TOP);
 				}
-				if (info.ticket < Info.keepGuildBattleTicksts) {
+				if (info.ticket < Config.keepGuildBattleTicksts) {
 					result.add(Action.GET_FAIRY_REWARD);
 				}
 				break;
@@ -200,6 +202,7 @@ public class Process {
 									info.username, info.ap, info.apMax,
 									info.bc, info.bcMax, info.cardList.size(),
 									info.cardMax, info.ticket, Config.sessionId));
+					MainFrame.Update();
 					info.events.push(Info.EventType.needFloorInfo);
 				} else {
 					Go.log(ErrorData.text);
@@ -222,6 +225,7 @@ public class Process {
 									info.username, info.ap, info.apMax,
 									info.bc, info.bcMax, info.cardList.size(),
 									info.cardMax, info.ticket, Config.sessionId));
+					MainFrame.Update();
 					info.events.push(Info.EventType.needFloorInfo);
 				} else {
 					info.events.push(Info.EventType.notLoggedIn);
@@ -243,7 +247,7 @@ public class Process {
 							info.front.floorId, 
 							info.front.cost));
 				}
-				
+				MainFrame.Update();
 			} catch (Exception ex) {
 				if (ex.getMessage() != null && ex.getMessage().equals("302")) {
 					info.events.push(Info.EventType.innerMapJump);
@@ -262,7 +266,7 @@ public class Process {
 							info.front.floorId, 
 							info.front.cost));
 				}
-				
+				MainFrame.Update();
 			} catch (Exception ex) {
 				if (ex.getMessage().equals("302")) {
 					info.events.push(Info.EventType.innerMapJump);
@@ -283,6 +287,7 @@ public class Process {
 				} else {
 					if (Config.FairyBattleFirst) info.events.push(Info.EventType.fairyAppear);
 				}
+				MainFrame.Update();
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.ConnectionError) {
 					info.events.push(Info.EventType.fairyAppear); // 再次检测
@@ -301,6 +306,7 @@ public class Process {
 							info.ap, info.apMax, info.bc, info.bcMax,
 							info.area.get(Integer.parseInt(info.front.areaId)).areaName, 
 							info.front.floorId));	
+					MainFrame.Update();
 				} else {
 					
 				}
@@ -336,6 +342,7 @@ public class Process {
 							info.fairy.FairyName,info.FairySelectUserList.get(info.fairy.UserId).userName, info.fairy.FairyLevel, info.bc, info.bcMax, info.ap, info.apMax, 
 							info.ticket, result);
 					if (info.gather != -1) str += String.format(", gather=%d", info.gather);
+					MainFrame.Update();
 					Go.log(str);
 				} else {
 					
@@ -353,6 +360,7 @@ public class Process {
 				} else {
 					
 				}
+				MainFrame.Update();
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) throw ex;
 			}
@@ -383,6 +391,7 @@ public class Process {
 					String str = String.format("PFB name=%s, Lv: %s, %.2f%%/%.2f%%, bc: %d/%d, ap: %d/%d, ticket: %d, week:%s, %s",
 							info.gfairy.FairyName, info.gfairy.FairyLevel , ora, rra, info.bc, info.bcMax, info.ap, info.apMax, 
 							info.ticket, info.week, result);
+					MainFrame.Update();
 					Thread.sleep(5000);
 					Go.log(str);
 				} else {
@@ -400,6 +409,7 @@ public class Process {
 				} else {
 					if (info.NoFairy) Go.log("Night Mode");
 				}
+				MainFrame.Update();
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) throw ex;
 			}
@@ -410,6 +420,7 @@ public class Process {
 					Go.log(ErrorData.text);
 					ErrorData.clear();
 				}
+				MainFrame.Update();
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) throw ex;
 			}
@@ -419,6 +430,7 @@ public class Process {
 				if (LvUp.run()) {
 					Go.log(String.format("Level UP! AP:%d BC:%d", Process.info.apMax, Process.info.bcMax));
 				}
+				MainFrame.Update();
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) throw ex;
 			}
@@ -447,6 +459,7 @@ public class Process {
 				} else {
 					Go.log("Sth Wrong @USE");
 				}
+				MainFrame.Update();
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) throw ex;
 			}
@@ -459,6 +472,7 @@ public class Process {
 				} else {
 					Go.log("Something wrong");
 				}
+				MainFrame.Update();
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) throw ex;
 				
@@ -472,6 +486,7 @@ public class Process {
 				} else {
 					Go.log("Something wrong");
 				}
+				MainFrame.Update();
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) throw ex;
 			}

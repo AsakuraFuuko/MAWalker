@@ -50,6 +50,14 @@ public class MainFrame extends JFrame {
 	private static JButton BUTTON_1;
 	private static JButton BUTTON;
 	public static boolean isExit = false;
+	private static JLabel username;
+	private static JLabel lv;
+	private static JLabel ap;
+	private static JLabel bc;
+	private static JLabel gather;
+	private static JLabel week;
+	private static JLabel tickets;
+
 	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
 		//
 		// sets the default font for all Swing components.
@@ -104,8 +112,7 @@ public class MainFrame extends JFrame {
 				if (arg0.getButton() == MouseEvent.BUTTON1) {
 					OptionDialog od = new OptionDialog();
 					od.setVisible(true);
-					Go.log(String.format("加载了配置文件：%s\n",
-							Go.configFile));
+					Go.log(String.format("加载了配置文件：%s\n", Go.configFile));
 				}
 			}
 		});
@@ -150,46 +157,45 @@ public class MainFrame extends JFrame {
 		lblNewLabel.setBounds(0, 0, 45, 15);
 		panel_1.add(lblNewLabel);
 
-		JLabel lblNewLabel_1 = new JLabel(
-				"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		lblNewLabel_1.setDoubleBuffered(true);
-		lblNewLabel_1.setBounds(50, 0, 300, 15);
-		panel_1.add(lblNewLabel_1);
+		username = new JLabel("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+		username.setDoubleBuffered(true);
+		username.setBounds(50, 0, 300, 15);
+		panel_1.add(username);
 
 		JLabel lblNewLabel_2 = new JLabel("LV");
 		lblNewLabel_2.setBounds(0, 25, 20, 15);
 		panel_1.add(lblNewLabel_2);
 
-		JLabel label = new JLabel("250");
-		label.setDoubleBuffered(true);
-		label.setBounds(20, 25, 25, 15);
-		panel_1.add(label);
+		lv = new JLabel("250");
+		lv.setDoubleBuffered(true);
+		lv.setBounds(20, 25, 25, 15);
+		panel_1.add(lv);
 
 		JLabel lblAp = new JLabel("AP");
 		lblAp.setBounds(55, 25, 20, 15);
 		panel_1.add(lblAp);
 
-		JLabel label_1 = new JLabel("250/250");
-		label_1.setDoubleBuffered(true);
-		label_1.setBounds(75, 25, 50, 15);
-		panel_1.add(label_1);
+		ap = new JLabel("250/250");
+		ap.setDoubleBuffered(true);
+		ap.setBounds(75, 25, 50, 15);
+		panel_1.add(ap);
 
 		JLabel lblBc = new JLabel("BC");
 		lblBc.setBounds(145, 25, 20, 15);
 		panel_1.add(lblBc);
 
-		JLabel label_2 = new JLabel("250/250");
-		label_2.setDoubleBuffered(true);
-		label_2.setBounds(165, 25, 50, 15);
-		panel_1.add(label_2);
+		bc = new JLabel("250/250");
+		bc.setDoubleBuffered(true);
+		bc.setBounds(165, 25, 50, 15);
+		panel_1.add(bc);
 
 		JLabel label_3 = new JLabel("收集物");
 		label_3.setBounds(0, 50, 45, 15);
 		panel_1.add(label_3);
 
-		JLabel label_4 = new JLabel("10000000");
-		label_4.setBounds(45, 50, 60, 15);
-		panel_1.add(label_4);
+		gather = new JLabel("10000000");
+		gather.setBounds(45, 50, 60, 15);
+		panel_1.add(gather);
 
 		JLabel label_5 = new JLabel("团贡");
 		label_5.setBounds(110, 50, 34, 15);
@@ -237,7 +243,7 @@ public class MainFrame extends JFrame {
 		BUTTON_1 = new JButton("停止");
 		BUTTON_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(td.isAlive()){
+				if (td.isAlive()) {
 					isExit = true;
 				}
 				Go.log("停止...");
@@ -250,9 +256,17 @@ public class MainFrame extends JFrame {
 		BUTTON_1.setBounds(641, 25, 60, 20);
 		panel_1.add(BUTTON_1);
 
-		JLabel lblNewLabel_3 = new JLabel("1000000000");
-		lblNewLabel_3.setBounds(145, 50, 76, 15);
-		panel_1.add(lblNewLabel_3);
+		week = new JLabel("1000000000");
+		week.setBounds(145, 50, 76, 15);
+		panel_1.add(week);
+
+		JLabel label = new JLabel("出击券");
+		label.setBounds(225, 25, 45, 15);
+		panel_1.add(label);
+
+		tickets = new JLabel("20");
+		tickets.setBounds(269, 25, 20, 15);
+		panel_1.add(tickets);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane
@@ -283,5 +297,16 @@ public class MainFrame extends JFrame {
 			}
 		});
 		scrollPane.setViewportView(txtrLogtext);
+	}
+
+	public static void Update() {
+		username.setText(String.format("%s (%s)", Process.info.username,
+				Config.LoginId));
+		lv.setText(String.valueOf(Process.info.lv));
+		ap.setText(String.format("%d/%d", Process.info.ap, Process.info.apMax));
+		bc.setText(String.format("%d/%d", Process.info.bc, Process.info.bcMax));
+		gather.setText(String.valueOf(Process.info.gather));
+		week.setText(String.valueOf(Process.info.week));
+		tickets.setText(String.valueOf(Process.info.ticket));
 	}
 }
