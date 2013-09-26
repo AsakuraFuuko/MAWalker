@@ -57,6 +57,13 @@ public class MainFrame extends JFrame {
 	private static JLabel gather;
 	private static JLabel week;
 	private static JLabel tickets;
+	private static JLabel exp;
+	private static JLabel cards;
+	private static JLabel guidename;
+	private static JLabel guidelv;
+	private static JProgressBar ownhp;
+	private static JProgressBar rivalhp;
+	private static JProgressBar totalhp;
 
 	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
 		//
@@ -132,8 +139,8 @@ public class MainFrame extends JFrame {
 		toolBar.add(textField);
 		textField.setColumns(10);
 
-		JProgressBar progressBar = new JProgressBar();
-		toolBar.add(progressBar);
+		totalhp = new JProgressBar();
+		toolBar.add(totalhp);
 
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.CENTER);
@@ -172,21 +179,21 @@ public class MainFrame extends JFrame {
 		panel_1.add(lv);
 
 		JLabel lblAp = new JLabel("AP");
-		lblAp.setBounds(55, 25, 20, 15);
+		lblAp.setBounds(182, 25, 20, 15);
 		panel_1.add(lblAp);
 
 		ap = new JLabel("250/250");
 		ap.setDoubleBuffered(true);
-		ap.setBounds(75, 25, 50, 15);
+		ap.setBounds(202, 25, 50, 15);
 		panel_1.add(ap);
 
 		JLabel lblBc = new JLabel("BC");
-		lblBc.setBounds(145, 25, 20, 15);
+		lblBc.setBounds(262, 25, 20, 15);
 		panel_1.add(lblBc);
 
 		bc = new JLabel("250/250");
 		bc.setDoubleBuffered(true);
-		bc.setBounds(165, 25, 50, 15);
+		bc.setBounds(282, 25, 50, 15);
 		panel_1.add(bc);
 
 		JLabel label_3 = new JLabel("收集物");
@@ -261,12 +268,64 @@ public class MainFrame extends JFrame {
 		panel_1.add(week);
 
 		JLabel label = new JLabel("出击券");
-		label.setBounds(225, 25, 45, 15);
+		label.setBounds(342, 25, 45, 15);
 		panel_1.add(label);
 
 		tickets = new JLabel("20");
-		tickets.setBounds(269, 25, 20, 15);
+		tickets.setBounds(386, 25, 20, 15);
 		panel_1.add(tickets);
+
+		JLabel lblexp = new JLabel("升级还需Exp");
+		lblexp.setBounds(50, 25, 76, 15);
+		panel_1.add(lblexp);
+
+		exp = new JLabel("1000000");
+		exp.setBounds(124, 25, 60, 15);
+		panel_1.add(exp);
+
+		JLabel label_1 = new JLabel("卡片数");
+		label_1.setBounds(231, 50, 40, 15);
+		panel_1.add(label_1);
+
+		cards = new JLabel("250/250");
+		cards.setBounds(273, 50, 54, 15);
+		panel_1.add(cards);
+
+		JLabel label_2 = new JLabel("外敌名称");
+		label_2.setBounds(404, 0, 54, 15);
+		panel_1.add(label_2);
+
+		guidename = new JLabel("xxxxxxxxxxxx");
+		guidename.setBounds(473, 0, 125, 15);
+		panel_1.add(guidename);
+
+		JLabel lblNewLabel_3 = new JLabel("外敌等级");
+		lblNewLabel_3.setBounds(404, 25, 54, 15);
+		panel_1.add(lblNewLabel_3);
+
+		guidelv = new JLabel("250");
+		guidelv.setBounds(473, 25, 54, 15);
+		panel_1.add(guidelv);
+
+		JLabel label_4 = new JLabel("攻击血量");
+		label_4.setBounds(404, 50, 48, 15);
+		panel_1.add(label_4);
+
+		ownhp = new JProgressBar();
+		ownhp.setBounds(497, 51, 76, 14);
+		panel_1.add(ownhp);
+
+		rivalhp = new JProgressBar();
+		rivalhp.setBounds(584, 51, 76, 14);
+		panel_1.add(rivalhp);
+
+		JLabel label_6 = new JLabel("我方");
+		label_6.setBounds(460, 50, 27, 15);
+		panel_1.add(label_6);
+
+		JLabel label_7 = new JLabel("对方");
+		label_7.setBounds(670, 50, 24, 15);
+		panel_1.add(label_7);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane
@@ -308,5 +367,22 @@ public class MainFrame extends JFrame {
 		gather.setText(String.valueOf(Process.info.gather));
 		week.setText(String.valueOf(Process.info.week));
 		tickets.setText(String.valueOf(Process.info.ticket));
+		exp.setText(String.valueOf(Process.info.exp));
+		cards.setText(String.format("%d/%d", Process.info.cardList.size(),
+				Process.info.cardMax));
+		guidename.setText(Process.info.gfairy.FairyName);
+		guidelv.setText(Process.info.gfairy.FairyLevel);
+
+		double ora = (double) Process.info.gfairy.OwnGuildHP
+				/ (double) Process.info.gfairy.GuildTotalHP;
+		double rra = (double) Process.info.gfairy.RivalGuildHP
+				/ (double) Process.info.gfairy.GuildTotalHP;
+
+		ownhp.setMaximum((int) (Config.GuildBattlePercent * 100));
+		ownhp.setValue((int) (ora * 100));
+		rivalhp.setMaximum((int) (Config.GuildBattlePercent * 100));
+		rivalhp.setValue((int) (rra * 100));
+		totalhp.setMaximum((int) Process.info.gfairy.GuildTotalHP);
+		totalhp.setValue((int) (Process.info.gfairy.OwnGuildHP + Process.info.gfairy.RivalGuildHP));
 	}
 }

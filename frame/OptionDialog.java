@@ -150,7 +150,7 @@ public class OptionDialog extends JDialog {
 		setResizable(false);
 		setTitle("设置");
 		setUIFont(new FontUIResource("Tohoma", Font.PLAIN, 12));
-		setSize(803, 407);
+		setSize(803, 416);
 		setLocationRelativeTo(null);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel);
@@ -492,12 +492,12 @@ public class OptionDialog extends JDialog {
 
 		JPanel panel_111 = new JPanel();
 		panel_111.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_111.setBounds(10, 237, 779, 101);
+		panel_111.setBounds(10, 237, 779, 107);
 		contentPanel.add(panel_111);
 		panel_111.setLayout(null);
 		{
 			JLabel lblNewLabel_2 = new JLabel("卡组设置");
-			lblNewLabel_2.setBounds(10, 10, 54, 15);
+			lblNewLabel_2.setBounds(10, 0, 54, 15);
 			panel_111.add(lblNewLabel_2);
 		}
 		{
@@ -721,7 +721,7 @@ public class OptionDialog extends JDialog {
 			textPane.setEditable(false);
 			textPane.setBackground(SystemColor.control);
 			textPane.setText("0：卡组1\r\n1：卡组2\r\n2：卡组3\r\n3：推荐卡组");
-			textPane.setBounds(10, 25, 103, 66);
+			textPane.setBounds(10, 10, 103, 87);
 			panel_111.add(textPane);
 		}
 
