@@ -103,6 +103,7 @@ public class Process {
 				}
 				if (info.ticket < Config.keepGuildBattleTicksts) {
 					result.add(Action.GET_FAIRY_REWARD);
+					result.add(Action.UPDATE_INFO);
 					result.add(Action.GUILD_TOP);
 				}
 				break;
@@ -152,6 +153,8 @@ public class Process {
 			case gotoFloor:
 				result.add(Action.GOTO_FLOOR);
 				break;
+			case updateInfo:
+				result.add(Action.UPDATE_INFO);
 			}
 			if (!result.isEmpty())
 				return result;
@@ -557,6 +560,35 @@ public class Process {
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.none)
 					throw ex;
+			}
+			break;
+		case UPDATE_INFO:
+			try {
+				switch (CookieLogin.run(true)) {
+				case 1: {
+					Go.log(String
+							.format("Update User Information: %s, AP: %d/%d, BC: %d/%d, ticket: %d",
+									Process.info.username,
+									Process.info.ap,
+									Process.info.apMax,
+									Process.info.bc,
+									Process.info.bcMax,
+									Process.info.ticket));
+					MainFrame.Update();
+				}
+					break;
+				case 2: {
+					Go.log("外敌战斗结果跳转...请重试一次");
+					ErrorData.clear();
+				}
+					break;
+				default:
+					Go.log("更新出错0.0");
+				}
+			} catch (Exception e) {
+				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) {
+					Go.log("更新出错0.0");
+				}
 			}
 			break;
 		case NOTHING:

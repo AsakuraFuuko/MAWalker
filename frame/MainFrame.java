@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -64,6 +65,11 @@ public class MainFrame extends JFrame {
 	private static JProgressBar ownhp;
 	private static JProgressBar rivalhp;
 	private static JProgressBar totalhp;
+	private static JLabel redtea;
+	private static JLabel redtube;
+	private static JLabel greentea;
+	private static JLabel greentube;
+	private static JLabel todaytube;
 
 	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
 		//
@@ -106,7 +112,7 @@ public class MainFrame extends JFrame {
 		setName("MainFrame");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(720, 427);
+		setSize(720, 438);
 		setLocationRelativeTo(null);
 
 		JMenuBar menuBar = new JMenuBar();
@@ -125,6 +131,24 @@ public class MainFrame extends JFrame {
 		});
 		mnNewMenu.setDoubleBuffered(true);
 		menuBar.add(mnNewMenu);
+
+		JMenu menu = new JMenu("手动更新信息");
+		menu.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (arg0.getButton() == MouseEvent.BUTTON1
+						&& BUTTON_1.isEnabled()) {
+					Process.info.events.add(EventType.updateInfo);
+					JOptionPane.showMessageDialog(MainFrame.this,
+							"更新事件已加入队列..");
+				}
+			}
+		});
+		menuBar.add(menu);
+
+		JMenu menu_1 = new JMenu("查看团内成员贡献（不可用）");
+		menu_1.setEnabled(false);
+		menuBar.add(menu_1);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -139,14 +163,11 @@ public class MainFrame extends JFrame {
 		toolBar.add(textField);
 		textField.setColumns(10);
 
-		totalhp = new JProgressBar();
-		toolBar.add(totalhp);
-
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.CENTER);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[] { 410, 0 };
-		gbl_panel.rowHeights = new int[] { 79, 0, 0 };
+		gbl_panel.rowHeights = new int[] { 108, 0, 0 };
 		gbl_panel.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
 		gbl_panel.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
@@ -268,11 +289,11 @@ public class MainFrame extends JFrame {
 		panel_1.add(week);
 
 		JLabel label = new JLabel("出击券");
-		label.setBounds(342, 25, 45, 15);
+		label.setBounds(341, 25, 45, 15);
 		panel_1.add(label);
 
 		tickets = new JLabel("20");
-		tickets.setBounds(386, 25, 20, 15);
+		tickets.setBounds(385, 25, 20, 15);
 		panel_1.add(tickets);
 
 		JLabel lblexp = new JLabel("升级还需Exp");
@@ -326,6 +347,54 @@ public class MainFrame extends JFrame {
 		JLabel label_7 = new JLabel("对方");
 		label_7.setBounds(670, 50, 24, 15);
 		panel_1.add(label_7);
+
+		JLabel label_8 = new JLabel("红茶");
+		label_8.setBounds(0, 75, 34, 15);
+		panel_1.add(label_8);
+
+		redtea = new JLabel("1000");
+		redtea.setBounds(29, 75, 34, 15);
+		panel_1.add(redtea);
+
+		JLabel label_10 = new JLabel("红试管");
+		label_10.setBounds(69, 75, 36, 15);
+		panel_1.add(label_10);
+
+		redtube = new JLabel("1000");
+		redtube.setBounds(110, 75, 34, 15);
+		panel_1.add(redtube);
+
+		JLabel label_12 = new JLabel("绿茶");
+		label_12.setBounds(145, 75, 34, 15);
+		panel_1.add(label_12);
+
+		greentea = new JLabel("1000");
+		greentea.setBounds(180, 75, 34, 15);
+		panel_1.add(greentea);
+
+		JLabel label_14 = new JLabel("绿试管");
+		label_14.setBounds(219, 75, 36, 15);
+		panel_1.add(label_14);
+
+		greentube = new JLabel("1000");
+		greentube.setBounds(262, 75, 34, 15);
+		panel_1.add(greentube);
+
+		JLabel label_16 = new JLabel("外敌残血量");
+		label_16.setBounds(404, 75, 60, 15);
+		panel_1.add(label_16);
+
+		totalhp = new JProgressBar();
+		totalhp.setBounds(473, 76, 221, 14);
+		panel_1.add(totalhp);
+
+		JLabel label_9 = new JLabel("今日剩余");
+		label_9.setBounds(296, 75, 54, 15);
+		panel_1.add(label_9);
+
+		todaytube = new JLabel("5红5绿");
+		todaytube.setBounds(351, 75, 45, 15);
+		panel_1.add(todaytube);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane
@@ -383,6 +452,14 @@ public class MainFrame extends JFrame {
 		rivalhp.setMaximum((int) (Config.GuildBattlePercent * 100));
 		rivalhp.setValue((int) (rra * 100));
 		totalhp.setMaximum((int) Process.info.gfairy.GuildTotalHP);
-		totalhp.setValue((int) (Process.info.gfairy.OwnGuildHP + Process.info.gfairy.RivalGuildHP));
+		totalhp.setValue((int) (Process.info.gfairy.GuildTotalHP
+				- Process.info.gfairy.OwnGuildHP - Process.info.gfairy.RivalGuildHP));
+
+		redtea.setText(String.valueOf(Process.info.fullBc));
+		redtube.setText(String.valueOf(Process.info.halfBc));
+		greentea.setText(String.valueOf(Process.info.fullAp));
+		greentube.setText(String.valueOf(Process.info.halfAp));
+		todaytube.setText(String.format("%d红%d绿", Process.info.halfBcToday,
+				Process.info.halfApToday));
 	}
 }

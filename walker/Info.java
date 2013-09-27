@@ -167,7 +167,8 @@ public class Info {
 		PFBGood,
 		recvPFBGood,
 		gotoFloor,
-		cookieLogin
+		cookieLogin,
+		updateInfo
 	}
 	public Stack<EventType> events;
 	

@@ -104,6 +104,8 @@ public class Think {
 					score = ptr;
 				}
 				break;
+			case UPDATE_INFO:
+				return Action.UPDATE_INFO;
 			default:
 				break;
 			}

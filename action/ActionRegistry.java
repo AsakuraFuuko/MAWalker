@@ -18,6 +18,7 @@ public class ActionRegistry {
 		PFB_GOOD,
 		RECV_PFB_GOOD,
 		USE,
-		COOKIELOGIN //cookie登陆
+		COOKIELOGIN, //cookie登陆
+		UPDATE_INFO
 	}
 }
