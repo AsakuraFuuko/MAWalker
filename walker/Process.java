@@ -1,5 +1,7 @@
 package walker;
 
+import info.Floor;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -13,7 +15,6 @@ import net.Network;
 import org.w3c.dom.Document;
 
 import frame.MainFrame;
-
 import walker.Info.TimeoutEntry;
 import action.ActionRegistry.Action;
 import action.AddArea;
@@ -28,6 +29,7 @@ import action.GuildTop;
 import action.Login;
 import action.LvUp;
 import action.PFBGood;
+import action.PartyRank;
 import action.PrivateFairyBattle;
 import action.RecvPFBGood;
 import action.SellCard;
@@ -66,7 +68,7 @@ public class Process {
 		switch (ErrorData.currentDataType) {
 		case bytes:
 			if (ErrorData.bytes != null) {
-				Go.log(new String(ErrorData.bytes,Charset.forName("utf-8")));
+				Go.log(new String(ErrorData.bytes, Charset.forName("utf-8")));
 			} else {
 				Go.log("Set type to byte, but no message");
 			}
@@ -155,6 +157,9 @@ public class Process {
 				break;
 			case updateInfo:
 				result.add(Action.UPDATE_INFO);
+				break;
+			case partyRank:
+				result.add(Action.PARTY_RANK);
 			}
 			if (!result.isEmpty())
 				return result;
@@ -273,8 +278,13 @@ public class Process {
 		case GET_FLOOR_INFO:
 			try {
 				if (GetFloorInfo.run()) {
-					if (Process.info.AllClear)
-						Process.info.front = Process.info.floor.get(1);
+					if (Process.info.AllClear) {
+						if (Process.info.floor.contains(1))
+							Process.info.front = Process.info.floor.get(1);
+						else {
+							Process.info.front = Process.info.floor.get(2);
+						}
+					}
 					Go.log(String.format(
 							"Area(%d) Front: %s>%s@c=%d",
 							info.area.size(),
@@ -414,6 +424,7 @@ public class Process {
 
 				}
 				MainFrame.Update();
+				Thread.sleep(Random(5000, 10000));
 			} catch (Exception ex) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.none)
 					throw ex;
@@ -452,7 +463,7 @@ public class Process {
 									info.ticket, info.week, result);
 					Go.log(str);
 					MainFrame.Update();
-					Thread.sleep(3000);
+					Thread.sleep(Random(10000, 15000));
 				} else {
 
 				}
@@ -464,7 +475,7 @@ public class Process {
 		case GUILD_TOP:
 			try {
 				if (GuildTop.run()) {
-					
+
 				} else {
 					if (info.NoFairy)
 						Go.log("Night Mode");
@@ -568,12 +579,9 @@ public class Process {
 				case 1: {
 					Go.log(String
 							.format("Update User Information: %s, AP: %d/%d, BC: %d/%d, ticket: %d",
-									Process.info.username,
-									Process.info.ap,
-									Process.info.apMax,
-									Process.info.bc,
-									Process.info.bcMax,
-									Process.info.ticket));
+									Process.info.username, Process.info.ap,
+									Process.info.apMax, Process.info.bc,
+									Process.info.bcMax, Process.info.ticket));
 					MainFrame.Update();
 				}
 					break;
@@ -588,6 +596,20 @@ public class Process {
 			} catch (Exception e) {
 				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) {
 					Go.log("更新出错0.0");
+				}
+			}
+			break;
+		case PARTY_RANK:
+			try {
+				if (PartyRank.run()) {
+					Go.log(ErrorData.text);
+					ErrorData.clear();
+				} else {
+					Go.log("Something wrong");
+				}
+			} catch (Exception e) {
+				if (ErrorData.currentErrorType == ErrorData.ErrorType.none) {
+					throw e;
 				}
 			}
 			break;

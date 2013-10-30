@@ -168,7 +168,8 @@ public class Info {
 		recvPFBGood,
 		gotoFloor,
 		cookieLogin,
-		updateInfo
+		updateInfo,
+		partyRank
 	}
 	public Stack<EventType> events;
 	

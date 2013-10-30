@@ -6,14 +6,12 @@ import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.util.ArrayList;
 import java.util.Enumeration;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -29,8 +27,11 @@ import javax.swing.plaf.FontUIResource;
 import walker.Config;
 import walker.Config.autoUseType;
 import walker.GetConfig;
-import walker.Go;
-import walker.Process;
+import walker.SaveConfig;
+
+import javax.swing.JComboBox;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class OptionDialog extends JDialog {
 
@@ -48,7 +49,6 @@ public class OptionDialog extends JDialog {
 	private static JRadioButton bcfull;
 	private static JRadioButton bchalf;
 	private static JTextField bclow;
-	private static JTextField configPath;
 	private static JCheckBox debug;
 	private static JCheckBox fairy_battle_first;
 	private static JTextField FairyDeckBc;
@@ -80,7 +80,6 @@ public class OptionDialog extends JDialog {
 	private static final long serialVersionUID = -510067771228671362L;
 	private static JTextField sessionId;
 	private static JTextField user_agent;
-	private static JTextField username;
 
 	/**
 	 * Launch the application.
@@ -117,26 +116,56 @@ public class OptionDialog extends JDialog {
 	private static JCheckBox savelog;
 	private static ButtonGroup apbg;
 	private static ButtonGroup bcbg;
+	private static JComboBox<String> username;
 	{
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		JPanel buttonPane = new JPanel();
-		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		getContentPane().add(buttonPane, BorderLayout.SOUTH);
+		getContentPane().add(buttonPane, BorderLayout.NORTH);
 		{
-			JButton okButton = new JButton("确定");
+			JButton okButton = new JButton("保存设置");
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (Go.configFile.isEmpty()) {
+					if (username.getSelectedItem().toString().isEmpty()) {
 						JOptionPane.showMessageDialog(OptionDialog.this,
 								"请先选择一个配置文件..");
 						return;
 					}
 					updateConfig();
-					Config.saveConfig(Go.configFile);
+					try {
+						SaveConfig.toDB();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					JOptionPane.showMessageDialog(OptionDialog.this, "保存完成..");
-					dispose();
 				}
 			});
+			buttonPane.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+
+			JButton button = new JButton("新增用户");
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String s = JOptionPane.showInputDialog(OptionDialog.this,
+							"请输入用户Id:").toString();
+					if (!s.isEmpty())
+						newUser(s);
+				}
+			});
+			buttonPane.add(button);
+
+			JButton button_1 = new JButton("删除用户");
+			button_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					int i = JOptionPane.showConfirmDialog(OptionDialog.this,
+							"是否删除此用户的配置?", "删除用户", JOptionPane.YES_NO_OPTION);
+					if (i == JOptionPane.YES_OPTION) {
+						String name = username.getSelectedItem().toString();
+						Config.sqlitecrud.delete("config", "username", name);
+						username.removeItem(name);
+					}
+				}
+			});
+			buttonPane.add(button_1);
 			okButton.setActionCommand("OK");
 			buttonPane.add(okButton);
 			getRootPane().setDefaultButton(okButton);
@@ -155,152 +184,10 @@ public class OptionDialog extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel);
 		contentPanel.setLayout(null);
-		{
-			configPath = new JTextField();
-			configPath.setName("configPath");
-			configPath.setBounds(92, 10, 255, 21);
-			contentPanel.add(configPath);
-			configPath.setColumns(10);
-		}
-		{
-			JLabel label = new JLabel("配置文件路径");
-			label.setBounds(10, 13, 72, 15);
-			contentPanel.add(label);
-		}
-		{
-			JButton button = new JButton("浏览");
-			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					JFileChooser jf = new JFileChooser("选择配置文件");
-					jf.setDialogTitle("选择配置文件...");
-					jf.setFileFilter(new javax.swing.filechooser.FileFilter() {
-						public boolean accept(File f) { // 设定可用的文件的后缀名
-							if (f.getName().endsWith(".xml") || f.isDirectory()) {
-								return true;
-							}
-							return false;
-						}
-
-						public String getDescription() {
-							return "配置文件(*.xml)";
-						}
-					});
-					jf.setCurrentDirectory(new File(System
-							.getProperty("user.dir")));
-					int result = jf.showOpenDialog(OptionDialog.this);
-					jf.setVisible(true);
-					File selectedFile = null;
-					if (result == JFileChooser.APPROVE_OPTION) {
-						selectedFile = jf.getSelectedFile();
-						if (selectedFile.exists()) {
-							Go.configFile = selectedFile.toString();
-							configPath.setText(Go.configFile);
-							try {
-								GetConfig.parse(Process.ParseXMLBytes1(Config
-										.ReadFileAll(Go.configFile)));
-								parseConfig();
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-			});
-			button.setBounds(360, 9, 64, 23);
-			contentPanel.add(button);
-		}
-
-		JPanel panel = new JPanel();
-		panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel.setBounds(10, 38, 414, 189);
-		contentPanel.add(panel);
-		panel.setLayout(null);
-
-		one_ap_only = new JCheckBox("是否只跑1AP的图");
-		one_ap_only.setSelected(true);
-		one_ap_only.setBounds(6, 6, 124, 23);
-		panel.add(one_ap_only);
-
-		fairy_battle_first = new JCheckBox("优先考虑妖精战");
-		fairy_battle_first.setBounds(6, 31, 124, 23);
-		panel.add(fairy_battle_first);
-
-		allow_bc_insuffient = new JCheckBox("强制跑图");
-		allow_bc_insuffient.setToolTipText("不勾选则是当你放的怪死了以后才跑图");
-		allow_bc_insuffient.setBounds(6, 56, 81, 23);
-		panel.add(allow_bc_insuffient);
-
-		auto_add_point = new JCheckBox("自动加点");
-		auto_add_point.setBounds(132, 6, 81, 23);
-		panel.add(auto_add_point);
-
-		allow_attack_same_fairy = new JCheckBox("允许舔同一个怪");
-		allow_attack_same_fairy.setBounds(132, 31, 118, 23);
-		panel.add(allow_attack_same_fairy);
-
-		night_mode = new JCheckBox("夜间模式");
-		night_mode.setSelected(true);
-		night_mode.setBounds(252, 31, 103, 23);
-		panel.add(night_mode);
-
-		receive_battle_present = new JCheckBox("自动收集妖精战礼物");
-		receive_battle_present.setSelected(true);
-		receive_battle_present.setBounds(252, 6, 141, 23);
-		panel.add(receive_battle_present);
-
-		{
-			JLabel lblhp = new JLabel("判断外敌战胜利HP的比例(默认0.51)");
-			lblhp.setBounds(10, 88, 203, 15);
-			panel.add(lblhp);
-		}
-
-		guild_battle_percent = new JTextField();
-		guild_battle_percent.setText("0.51");
-		guild_battle_percent.setBounds(219, 85, 66, 21);
-		panel.add(guild_battle_percent);
-		guild_battle_percent.setColumns(10);
-
-		{
-			JLabel label = new JLabel("出击书保留数量(默认8张) ");
-			label.setBounds(10, 113, 161, 15);
-			panel.add(label);
-		}
-
-		keep_guild_battle_tickets = new JTextField();
-		keep_guild_battle_tickets.setText("8");
-		keep_guild_battle_tickets.setBounds(219, 110, 66, 21);
-		panel.add(keep_guild_battle_tickets);
-		keep_guild_battle_tickets.setColumns(10);
-
-		debug = new JCheckBox("debug输出xml(开发者使用) ");
-		debug.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				if (debug.isSelected()) {
-					savelog.setSelected(true);
-					savelog.setEnabled(false);
-					// 如果被选中
-				} else {
-					savelog.setEnabled(true);
-					// 未被选中
-				}
-			}
-		});
-		debug.setBounds(6, 134, 185, 23);
-		panel.add(debug);
-
-		savelog = new JCheckBox("保存运行时的log,当debug勾选时忽略此处设置强制启用");
-		savelog.setSelected(true);
-		savelog.setBounds(6, 159, 325, 23);
-		panel.add(savelog);
-
-		rare_fairy_use_normal_deck = new JCheckBox("使用打普妖卡组来攻击觉醒怪");
-		rare_fairy_use_normal_deck.setBounds(132, 56, 185, 23);
-		panel.add(rare_fairy_use_normal_deck);
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_1.setBounds(434, 10, 355, 97);
+		panel_1.setBounds(10, 10, 355, 97);
 		contentPanel.add(panel_1);
 		panel_1.setLayout(null);
 		{
@@ -332,12 +219,6 @@ public class OptionDialog extends JDialog {
 			panel_1.add(lblNewLabel_1);
 		}
 		{
-			username = new JTextField();
-			username.setBounds(57, 7, 107, 21);
-			panel_1.add(username);
-			username.setColumns(10);
-		}
-		{
 			sessionId = new JTextField();
 			sessionId.setBounds(88, 35, 257, 21);
 			panel_1.add(sessionId);
@@ -348,9 +229,34 @@ public class OptionDialog extends JDialog {
 		password.setBounds(209, 7, 136, 21);
 		panel_1.add(password);
 
+		username = new JComboBox<String>();
+		username.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				if (arg0.getStateChange() == ItemEvent.SELECTED) { // 查看是否为新选中的选项触发
+					try {
+						if (Config.sqlitecrud.getTableCount("last") == 0) {
+							Config.sqlitecrud.insert("last",
+									new String[] { "last" },
+									new String[] { arg0.getItem().toString() });
+						} else {
+							Config.sqlitecrud.update("last", "1", "id",
+									new String[] { "last" },
+									new String[] { arg0.getItem().toString() });
+						}
+						GetConfig.fromDB(arg0.getItem().toString());
+						parseConfig();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		username.setBounds(53, 7, 111, 21);
+		panel_1.add(username);
+
 		JPanel panel_11 = new JPanel();
 		panel_11.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_11.setBounds(434, 117, 355, 110);
+		panel_11.setBounds(10, 117, 355, 110);
 		contentPanel.add(panel_11);
 		panel_11.setLayout(null);
 
@@ -384,8 +290,8 @@ public class OptionDialog extends JDialog {
 		}
 
 		aplow = new JTextField();
-		aplow.setText("1");
 		aplow.setEnabled(false);
+		aplow.setText("1");
 		aplow.setBounds(187, 7, 41, 21);
 		panel_11.add(aplow);
 		aplow.setColumns(10);
@@ -725,23 +631,188 @@ public class OptionDialog extends JDialog {
 			panel_111.add(textPane);
 		}
 
-		if (Go.configFile != null && !Go.configFile.isEmpty()) {
-			configPath.setText(Go.configFile);
-			try {
-				GetConfig.parse(Process.ParseXMLBytes1(Config
-						.ReadFileAll(Go.configFile)));
-				parseConfig();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		JPanel panel = new JPanel();
+		panel.setBounds(375, 10, 414, 217);
+		contentPanel.add(panel);
+		panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		panel.setLayout(null);
+
+		one_ap_only = new JCheckBox("是否只跑1AP的图");
+		one_ap_only.setSelected(true);
+		one_ap_only.setBounds(6, 6, 124, 23);
+		panel.add(one_ap_only);
+
+		fairy_battle_first = new JCheckBox("优先考虑妖精战");
+		fairy_battle_first.setBounds(6, 31, 124, 23);
+		panel.add(fairy_battle_first);
+
+		allow_bc_insuffient = new JCheckBox("强制跑图");
+		allow_bc_insuffient.setToolTipText("不勾选则是当你放的怪死了以后才跑图");
+		allow_bc_insuffient.setBounds(6, 56, 81, 23);
+		panel.add(allow_bc_insuffient);
+
+		auto_add_point = new JCheckBox("自动加点");
+		auto_add_point.setBounds(132, 6, 81, 23);
+		panel.add(auto_add_point);
+
+		allow_attack_same_fairy = new JCheckBox("允许舔同一个怪");
+		allow_attack_same_fairy.setBounds(132, 31, 118, 23);
+		panel.add(allow_attack_same_fairy);
+
+		night_mode = new JCheckBox("夜间模式");
+		night_mode.setSelected(true);
+		night_mode.setBounds(252, 31, 103, 23);
+		panel.add(night_mode);
+
+		receive_battle_present = new JCheckBox("自动收集妖精战礼物");
+		receive_battle_present.setSelected(true);
+		receive_battle_present.setBounds(252, 6, 141, 23);
+		panel.add(receive_battle_present);
+
+		{
+			JLabel lblhp = new JLabel("判断外敌战胜利HP的比例(默认0.51)");
+			lblhp.setBounds(10, 88, 203, 15);
+			panel.add(lblhp);
+		}
+
+		guild_battle_percent = new JTextField();
+		guild_battle_percent.setText("0.51");
+		guild_battle_percent.setBounds(219, 85, 66, 21);
+		panel.add(guild_battle_percent);
+		guild_battle_percent.setColumns(10);
+
+		{
+			JLabel label_1 = new JLabel("出击书保留数量(默认8张) ");
+			label_1.setBounds(10, 113, 161, 15);
+			panel.add(label_1);
+		}
+
+		keep_guild_battle_tickets = new JTextField();
+		keep_guild_battle_tickets.setText("8");
+		keep_guild_battle_tickets.setBounds(219, 110, 66, 21);
+		panel.add(keep_guild_battle_tickets);
+		keep_guild_battle_tickets.setColumns(10);
+
+		debug = new JCheckBox("debug输出xml(开发者使用) ");
+		debug.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (debug.isSelected()) {
+					savelog.setSelected(true);
+					savelog.setEnabled(false);
+					// 如果被选中
+				} else {
+					savelog.setEnabled(true);
+					// 未被选中
+				}
 			}
+		});
+		debug.setBounds(6, 134, 185, 23);
+		panel.add(debug);
+
+		savelog = new JCheckBox("保存运行时的log,当debug勾选时忽略此处设置强制启用");
+		savelog.setSelected(true);
+		savelog.setBounds(6, 159, 325, 23);
+		panel.add(savelog);
+
+		rare_fairy_use_normal_deck = new JCheckBox("使用打普妖卡组来攻击觉醒怪");
+		rare_fairy_use_normal_deck.setBounds(132, 56, 185, 23);
+		panel.add(rare_fairy_use_normal_deck);
+
+		// if (Go.configFile != null && !Go.configFile.isEmpty()) {
+		// configPath.setText(Go.configFile);
+		// try {
+		// GetConfig.parse(Process.ParseXMLBytes1(Config
+		// .ReadFileAll(Go.configFile)));
+		// parseConfig();
+		// } catch (Exception e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+
+		ArrayList<String> rs = Config.sqlitecrud.GetAllUserId("config");
+
+		for (String s : rs) {
+			username.addItem(s);
 		}
 
 		setModal(true);
 	}
 
+	public static void newUser(String name) {
+		username.addItem(name);
+		username.setSelectedItem(name);
+		password.setText("");
+		sessionId.setText("");
+		user_agent.setText("Million/236 (t03gchn; t03gzc; 4.1.2) samsung/t03gzc/t03gchn:4.1.2/JZO54K/N7100ZCDMD3:user/release-keys GooglePlay");
+		one_ap_only.setSelected(false);
+		auto_add_point.setSelected(false);
+		receive_battle_present.setSelected(true);
+		fairy_battle_first.setSelected(false);
+		allow_attack_same_fairy.setSelected(false);
+		night_mode.setSelected(true);
+		allow_bc_insuffient.setSelected(false);
+		rare_fairy_use_normal_deck.setSelected(false);
+		guild_battle_percent.setText("0.51");
+		keep_guild_battle_tickets.setText("8");
+
+		debug.setSelected(false);
+		savelog.setSelected(true);
+
+		auto_use_ap.setSelected(false);
+		aplow.setText("1");
+		ap_full_low.setText("10");
+
+		apfull.setSelected(false);
+		apall.setSelected(false);
+		aphalf.setSelected(true);
+
+		auto_use_bc.setSelected(false);
+		bclow.setText("50");
+		bc_full_low.setText("10");
+
+		bcfull.setSelected(false);
+		bcall.setSelected(false);
+		bchalf.setSelected(true);
+
+		aplow.setEnabled(false);
+		apfull.setEnabled(false);
+		apall.setEnabled(false);
+		aphalf.setEnabled(false);
+
+		bclow.setEnabled(false);
+		bcfull.setEnabled(false);
+		bcall.setEnabled(false);
+		bchalf.setEnabled(false);
+
+		FairyDeckNo.setText("0");
+		FairyDeckBc.setText("0");
+
+		RareFairyDeckNo.setText("0");
+		RareFairyDeckBc.setText("0");
+
+		GuildFairyDeckNo.setText("0");
+		GuildFairyDeckBc.setText("0");
+
+		FriendFairyBattleRareNo.setText("0");
+		FriendFairyBattleRareBc.setText("0");
+
+		FriendFairyBattleNormalNo.setText("0");
+		FriendFairyBattleNormalBc.setText("0");
+
+		LowerBCDeckNo.setText("0");
+		LowerBCDeckBc.setText("0");
+
+		updateConfig();
+		try {
+			SaveConfig.toDB();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public static void parseConfig() {
-		username.setText(Config.LoginId);
 		password.setText(Config.LoginPw);
 		one_ap_only.setSelected(Config.OneAPOnly);
 		auto_add_point.setSelected(Config.AutoAddp);
@@ -798,6 +869,34 @@ public class OptionDialog extends JDialog {
 			break;
 		}
 
+		if (Config.autoUseAp) {
+			aplow.setEnabled(true);
+			apfull.setEnabled(true);
+			apall.setEnabled(true);
+			aphalf.setEnabled(true);
+			ap_full_low.setEnabled(true);
+		} else {
+			aplow.setEnabled(false);
+			apfull.setEnabled(false);
+			apall.setEnabled(false);
+			aphalf.setEnabled(false);
+			ap_full_low.setEnabled(false);
+		}
+
+		if (Config.autoUseBc) {
+			bclow.setEnabled(true);
+			bcfull.setEnabled(true);
+			bcall.setEnabled(true);
+			bchalf.setEnabled(true);
+			bc_full_low.setEnabled(true);
+		} else {
+			bclow.setEnabled(false);
+			bcfull.setEnabled(false);
+			bcall.setEnabled(false);
+			bchalf.setEnabled(false);
+			bc_full_low.setEnabled(false);
+		}
+
 		FairyDeckNo.setText(Config.PrivateFairyBattleNormal.No);
 		FairyDeckBc.setText(String.format("%d",
 				Config.PrivateFairyBattleNormal.BC));
@@ -823,7 +922,7 @@ public class OptionDialog extends JDialog {
 	}
 
 	public static void updateConfig() {
-		Config.LoginId = username.getText();
+		Config.LoginId = (String) username.getSelectedItem();
 		Config.LoginPw = String.valueOf(password.getPassword());
 		Config.OneAPOnly = one_ap_only.isSelected();
 		Config.AutoAddp = auto_add_point.isSelected();
@@ -884,5 +983,13 @@ public class OptionDialog extends JDialog {
 				.parseInt(FriendFairyBattleNormalBc.getText());
 		Config.LowerBCDeck.No = LowerBCDeckNo.getText();
 		Config.LowerBCDeck.BC = Integer.parseInt(LowerBCDeckBc.getText());
+	}
+
+	public static boolean isContains(String str) {
+		boolean result = false;
+		for (int i = 0; i < username.getItemCount(); i++) {
+			result = username.getItemAt(i).equals(str);
+		}
+		return result;
 	}
 }

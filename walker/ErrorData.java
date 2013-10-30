@@ -80,7 +80,11 @@ public class ErrorData {
 		// cookie登录
 		CookieLoginDataError,
 		CookieLoginDataParseError,
-		CookieLoginResponse
+		CookieLoginResponse,
+		//团贡
+		PartyRankDataError,
+		PartyRankDataParseError,
+		PartyRankResponse
 	}
 	
 	

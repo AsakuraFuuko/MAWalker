@@ -10,19 +10,21 @@ import action.ActionRegistry.Action;
 import walker.Process;
 
 public class Think {
-	
+
 	private static final String AP_HALF = "101";
 	private static final String BC_HALF = "111";
 	private static final String AP_FULL = "1";
 	private static final String BC_FULL = "2";
-	
+
 	private static final int EXPLORE_NORMAL = 60;
 	private static final int EXPLORE_URGENT = 80;
 	private static final int GFL_PRI = 50;
 	private static final int GFL_HI_PRI = 70;
 	private static final int GF_PRI = 25;
 	private static final int USE_PRI = 99;
-	public static ActionRegistry.Action doIt (List<ActionRegistry.Action> possible) {
+
+	public static ActionRegistry.Action doIt(
+			List<ActionRegistry.Action> possible) {
 		Action best = Action.NOTHING;
 		int score = Integer.MIN_VALUE + 20;
 		for (int i = 0; i < possible.size(); i++) {
@@ -59,18 +61,17 @@ public class Think {
 					Process.info.fairy.No = "2";
 					return Action.PRIVATE_FAIRY_BATTLE;
 				}
-				if (Think.canBattle()) return Action.PRIVATE_FAIRY_BATTLE;
+				if (Think.canBattle())
+					return Action.PRIVATE_FAIRY_BATTLE;
 				break;
 			case EXPLORE:
 				int p = explorePoint();
 				if (p > score) {
 					best = Action.EXPLORE;
 					score = p;
-				}
-				else
-				{
+				} else {
 					try {
-						Thread.sleep(Random(20000, 30000)); //延时20~30秒
+						Thread.sleep(Random(20000, 30000)); // 延时20~30秒
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
@@ -92,7 +93,8 @@ public class Think {
 			case NOTHING:
 				break;
 			case SELL_CARD:
-				if (cardsToSell()) return Action.SELL_CARD;
+				if (cardsToSell())
+					return Action.SELL_CARD;
 				break;
 			case LV_UP:
 				decideUpPoint();
@@ -102,19 +104,27 @@ public class Think {
 				if (ptr > score) {
 					best = Action.USE;
 					score = ptr;
+				} else {
+					p = explorePoint();
+					if (p > score) {
+						best = Action.EXPLORE;
+						score = p;
+					}
 				}
 				break;
 			case UPDATE_INFO:
 				return Action.UPDATE_INFO;
+			case PARTY_RANK:
+				return Action.PARTY_RANK;
 			default:
 				break;
 			}
 		}
 		return best;
 	}
-	
+
 	private static int decideUse() {
-		
+
 		if (Config.autoUseAp) {
 			if (Process.info.ap < Config.autoApLow) {
 				switch (Config.autoApType) {
@@ -143,7 +153,7 @@ public class Think {
 					break;
 				default:
 					break;
-				
+
 				}
 			}
 		}
@@ -175,7 +185,7 @@ public class Think {
 					break;
 				default:
 					break;
-				
+
 				}
 			}
 		}
@@ -189,58 +199,46 @@ public class Think {
 			break;
 		case 4:
 			if (Process.info.bc >= Config.LowerBCDeck.BC) {
-				if (Process.info.bc < Config.FriendFairyBattleNormal.BC) //如果小于则用舔妖卡组打
+				if (Process.info.bc < Config.FriendFairyBattleNormal.BC) // 如果小于则用舔妖卡组打
 				{
 					Process.info.fairy.No = Config.LowerBCDeck.No;
-				}
-				else
-				{
+				} else {
 					Process.info.fairy.No = Config.FriendFairyBattleNormal.No;
 				}
-			}
-			else
+			} else
 				return false;
 			break;
 		case 5:
 			if (Process.info.bc >= Config.LowerBCDeck.BC) {
-				if (Config.RareFairyUseNormalDeck || Process.info.bc < Config.FriendFairyBattleRare.BC)
-				{
+				if (Config.RareFairyUseNormalDeck
+						|| Process.info.bc < Config.FriendFairyBattleRare.BC) {
 					Process.info.fairy.No = Config.LowerBCDeck.No;
-				}
-				else
-				{
+				} else {
 					Process.info.fairy.No = Config.FriendFairyBattleRare.No;
 				}
-			}
-			else
+			} else
 				return false;
 			break;
 		case 6:
 			if (Process.info.bc >= Config.LowerBCDeck.BC) {
-				if (Process.info.bc < Config.PrivateFairyBattleNormal.BC) //如果小于则用舔妖卡组打
+				if (Process.info.bc < Config.PrivateFairyBattleNormal.BC) // 如果小于则用舔妖卡组打
 				{
 					Process.info.fairy.No = Config.LowerBCDeck.No;
-				}
-				else
-				{
+				} else {
 					Process.info.fairy.No = Config.PrivateFairyBattleNormal.No;
 				}
-			}
-			else
+			} else
 				return false;
 			break;
 		case 7:
 			if (Process.info.bc >= Config.LowerBCDeck.BC) {
-				if (Config.RareFairyUseNormalDeck || Process.info.bc < Config.PrivateFairyBattleRare.BC)
-				{
+				if (Config.RareFairyUseNormalDeck
+						|| Process.info.bc < Config.PrivateFairyBattleRare.BC) {
 					Process.info.fairy.No = Config.LowerBCDeck.No;
-				}
-				else
-				{
+				} else {
 					Process.info.fairy.No = Config.PrivateFairyBattleRare.No;
 				}
-			}
-			else
+			} else
 				return false;
 			break;
 		default:
@@ -248,48 +246,72 @@ public class Think {
 		}
 		return true;
 	}
-	
+
 	private static void decideUpPoint() {
 		if (Config.Profile == 1) {
-			//主号全加BC
+			// 主号全加BC
 			Process.info.apUp = 0;
 			Process.info.bcUp = Process.info.pointToAdd;
 		} else if (Config.Profile == 2) {
-			//小号全加AP
+			// 小号全加AP
 			Process.info.apUp = Process.info.pointToAdd;
 			Process.info.bcUp = 0;
 		}
 	}
-	
+
 	private static int explorePoint() {
 		try {
 			if (Config.Profile == 2) {
-				if (Process.info.ap < 1) return Integer.MIN_VALUE;
-				Process.info.front = Process.info.floor.get(1);
+				if (Process.info.ap < 1)
+					return Integer.MIN_VALUE;
+				if (Process.info.floor.contains(1))
+					Process.info.front = Process.info.floor.get(1);
+				else {
+					Process.info.front = Process.info.floor.get(2);
+				}
 				return EXPLORE_URGENT;
 			}
-			if (Process.info.bc == 0) return Integer.MIN_VALUE;
+			if (Process.info.bc == 0)
+				return Integer.MIN_VALUE;
 			// 首先确定楼层
 			if (Process.info.AllClear) {
-				int ap = Process.info.ap / Process.info.bc * Config.PrivateFairyBattleNormal.BC;
+				int ap = Process.info.ap / Process.info.bc
+						* Config.PrivateFairyBattleNormal.BC;
 				if (ap > 1) {
 					Process.info.front = Process.info.floor.get(ap);
 				} else {
-					Process.info.front = Process.info.floor.get(1);
+					if (Process.info.floor.contains(1))
+						Process.info.front = Process.info.floor.get(1);
+					else {
+						Process.info.front = Process.info.floor.get(2);
+					}
 				}
 			}
-			if (Config.OneAPOnly) Process.info.front = Process.info.floor.get(1);
+			if (Config.OneAPOnly)
+				Process.info.front = Process.info.floor.get(1);
 			// 判断是否可以行动
-			if (Process.info.front == null) Process.info.front = Process.info.floor.get(1);
-			if (Config.AllowBCInsuffient && Process.info.ap >= Process.info.front.cost) return EXPLORE_URGENT; //强制跑图
-			if (Process.info.ap < Process.info.front.cost) return Integer.MIN_VALUE;
-			if (Process.info.ap == Process.info.apMax) return EXPLORE_URGENT;
+			if (Process.info.front == null)
+				if (Process.info.floor.contains(1))
+					Process.info.front = Process.info.floor.get(1);
+				else {
+					Process.info.front = Process.info.floor.get(2);
+				}
+			if (Config.AllowBCInsuffient
+					&& Process.info.ap >= Process.info.front.cost)
+				return EXPLORE_URGENT; // 强制跑图
+			if (!Process.info.OwnFairyBattleKilled)
+				return Integer.MIN_VALUE;
+			if (Process.info.ap < Process.info.front.cost)
+				return Integer.MIN_VALUE;
+			if (Process.info.ap == Process.info.apMax)
+				return EXPLORE_URGENT;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return Integer.MIN_VALUE;
 		}
 		return EXPLORE_NORMAL;
 	}
+
 	private static boolean cardsToSell() {
 		if (Config.Profile == 2) {
 			int count = 0;
@@ -303,18 +325,22 @@ public class Think {
 					}
 					count++;
 				}
-				if (count >= 30) break;
+				if (count >= 30)
+					break;
 			}
 			Process.info.toSell = toSell;
 			return false; // 测试状态
-			//return !toSell.isEmpty();
+			// return !toSell.isEmpty();
 		} else if (Config.Profile == 1) {
 			int count = 0;
 			String toSell = "";
 			for (Card c : Process.info.cardList) {
-				if (!c.exist) continue;
-				if (c.holo && c.hp >= 3500) continue; //闪卡不卖，但是低等级的闪卡照样要卖
-				if (c.hp > 6000) continue; //防止不小心把贵重卡片卖了 
+				if (!c.exist)
+					continue;
+				if (c.holo && c.hp >= 3500)
+					continue; // 闪卡不卖，但是低等级的闪卡照样要卖
+				if (c.hp > 6000)
+					continue; // 防止不小心把贵重卡片卖了
 				if (Config.CanBeSold.contains(c.cardId)) {
 					if (toSell.isEmpty()) {
 						toSell = c.serialId;
@@ -324,19 +350,24 @@ public class Think {
 					count++;
 					c.exist = false;
 				}
-				if (count >= 30) break;
+				if (count >= 30)
+					break;
 			}
-			
+
 			Process.info.toSell = toSell;
 			return !toSell.isEmpty();
 		}
 		return false;
-		
+
 	}
+
 	/**
 	 * 生成指定范围内的随机数
-	 * @param Min 最小值
-	 * @param Max 最大值
+	 * 
+	 * @param Min
+	 *            最小值
+	 * @param Max
+	 *            最大值
 	 * @return long类型的随机数
 	 */
 	public static long Random(long Min, long Max) {

@@ -16,7 +16,6 @@ import org.w3c.dom.Document;
 
 import walker.Config;
 import walker.ErrorData;
-import walker.Go;
 import walker.Info;
 import walker.Process;
 
@@ -104,7 +103,10 @@ public class Login {
 					if (cookies.get(i).getName().equals("S")) {
 						//System.out.println("- " + cookies.get(i).getValue());
 						Config.sessionId = cookies.get(i).getValue();
-						Config.saveSessionId(Config.sessionId, Go.configFile);
+						//Config.saveSessionId(Config.sessionId, Go.configFile);
+						Config.sqlitecrud.update("config", Config.LoginId,
+								"username", new String[] { "sessionId" },
+								new String[] { Config.sessionId });
 					}
 				}
 			}

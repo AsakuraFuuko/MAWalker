@@ -1,5 +1,7 @@
 package action;
 
+import info.FairyBattleInfo;
+
 import java.util.ArrayList;
 
 import javax.xml.xpath.XPath;
@@ -77,7 +79,10 @@ public class GuildTop {
 			Process.info.gfairy.FairyName = xpath.evaluate("//fairy/name", doc);
 			Process.info.gfairy.SerialId = xpath.evaluate("//fairy/serial_id", doc);
 			Process.info.gfairy.GuildId = xpath.evaluate("//fairy/discoverer_id", doc);
-			Process.info.gfairy.FairyLevel = xpath.evaluate("//fairy/lv", doc);
+			Process.info.gfairy.FairyLevel = xpath.evaluate("//fairy/lv", doc); //chain_counter
+			Process.info.gfairy.ChainCounter = xpath.evaluate("//guild_top_update/chain_counter", doc);
+			String s = xpath.evaluate("//guild_top_update/guild_fairy_weak/id", doc);
+			Process.info.gfairy.weak = FairyBattleInfo.GetWeak(s);
 			
 			Process.info.gfairy.GuildTotalHP = Long.parseLong(xpath.evaluate("//fairy/hp_max", doc));
 			

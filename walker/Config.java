@@ -30,6 +30,10 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public class Config {
 
+	public static DbFile dbfile;
+	public static SQLiteConn sqliteconn;
+	public static SQLiteCRUD sqlitecrud;
+
 	// login info
 	public static String LoginId = "";
 	public static String LoginPw = "";
@@ -119,7 +123,7 @@ public class Config {
 	 * 能被卖的卡列表
 	 */
 	public static ArrayList<String> CanBeSold = new ArrayList<String>();
-	
+
 	/**
 	 * 保留的卡列表
 	 */
@@ -246,7 +250,7 @@ public class Config {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
 	public static void saveConfig(String configFile) {
 		Document doc = null;
 		try {
@@ -254,108 +258,171 @@ public class Config {
 			Node node = null;
 			XPathFactory xpathFactory = XPathFactory.newInstance();
 			XPath xpath = xpathFactory.newXPath();
-			node = (Node) xpath.evaluate("/config/sessionId", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate("/config/sessionId", doc,
+					XPathConstants.NODE);
 			node.setTextContent(Config.sessionId);
 
-			node = (Node) xpath.evaluate("/config/username", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate("/config/username", doc,
+					XPathConstants.NODE);
 			node.setTextContent(Config.LoginId);
-			
-			node = (Node) xpath.evaluate("/config/password", doc,	XPathConstants.NODE);
+
+			node = (Node) xpath.evaluate("/config/password", doc,
+					XPathConstants.NODE);
 			node.setTextContent(Config.LoginPw);
-			
-			node = (Node) xpath.evaluate("/config/user_agent", doc,	XPathConstants.NODE);
+
+			node = (Node) xpath.evaluate("/config/user_agent", doc,
+					XPathConstants.NODE);
 			node.setTextContent(Config.UserAgent);
-			
-			node = (Node) xpath.evaluate("/config/option/one_ap_only", doc,	XPathConstants.NODE);
+
+			node = (Node) xpath.evaluate("/config/option/one_ap_only", doc,
+					XPathConstants.NODE);
 			node.setTextContent(b2s(Config.OneAPOnly));
-			
-			node = (Node) xpath.evaluate("/config/option/auto_add_point", doc,	XPathConstants.NODE);
+
+			node = (Node) xpath.evaluate("/config/option/auto_add_point", doc,
+					XPathConstants.NODE);
 			node.setTextContent(b2s(Config.AutoAddp));
 
-			node = (Node) xpath.evaluate("/config/option/receive_battle_present", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate(
+					"/config/option/receive_battle_present", doc,
+					XPathConstants.NODE);
 			node.setTextContent(b2s(Config.receiveBattlePresent));
 
-			node = (Node) xpath.evaluate("/config/option/fairy_battle_first", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate("/config/option/fairy_battle_first",
+					doc, XPathConstants.NODE);
 			node.setTextContent(b2s(Config.FairyBattleFirst));
 
-			node = (Node) xpath.evaluate("/config/option/allow_attack_same_fairy", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate(
+					"/config/option/allow_attack_same_fairy", doc,
+					XPathConstants.NODE);
 			node.setTextContent(b2s(Config.AllowAttackSameFairy));
 
-			node = (Node) xpath.evaluate("/config/option/night_mode", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate("/config/option/night_mode", doc,
+					XPathConstants.NODE);
 			node.setTextContent(b2s(Config.nightModeSwitch));
 
-			node = (Node) xpath.evaluate("/config/option/allow_bc_insuffient", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate("/config/option/allow_bc_insuffient",
+					doc, XPathConstants.NODE);
 			node.setTextContent(b2s(Config.AllowBCInsuffient));
-			
-			node = (Node) xpath.evaluate("/config/option/rare_fairy_use_normal_deck", doc,	XPathConstants.NODE);
+
+			node = (Node) xpath.evaluate(
+					"/config/option/rare_fairy_use_normal_deck", doc,
+					XPathConstants.NODE);
 			node.setTextContent(b2s(Config.RareFairyUseNormalDeck));
-			
-			node = (Node) xpath.evaluate("/config/option/guild_battle_percent", doc,	XPathConstants.NODE);
-			node.setTextContent(String.format("%.2f",	Config.GuildBattlePercent));
 
-			node = (Node) xpath.evaluate("/config/option/keep_guild_battle_tickets", doc,	XPathConstants.NODE);
-			node.setTextContent(String.format("%d",	Config.keepGuildBattleTicksts));
+			node = (Node) xpath.evaluate("/config/option/guild_battle_percent",
+					doc, XPathConstants.NODE);
+			node.setTextContent(String
+					.format("%.2f", Config.GuildBattlePercent));
 
-			node = (Node) xpath.evaluate("/config/option/debug", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate(
+					"/config/option/keep_guild_battle_tickets", doc,
+					XPathConstants.NODE);
+			node.setTextContent(String.format("%d",
+					Config.keepGuildBattleTicksts));
+
+			node = (Node) xpath.evaluate("/config/option/debug", doc,
+					XPathConstants.NODE);
 			node.setTextContent(b2s(Config.debug));
-			
-			node = (Node) xpath.evaluate("/config/option/savelog", doc,	XPathConstants.NODE);
+
+			node = (Node) xpath.evaluate("/config/option/savelog", doc,
+					XPathConstants.NODE);
 			node.setTextContent(b2s(Config.saveLog));
 
-			node = (Node) xpath.evaluate("/config/use/auto_use_ap", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate("/config/use/auto_use_ap", doc,
+					XPathConstants.NODE);
 			node.setTextContent(b2s(Config.autoUseAp));
 
-			node = (Node) xpath.evaluate("/config/use/strategy/ap/low", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate("/config/use/strategy/ap/low", doc,
+					XPathConstants.NODE);
 			node.setTextContent(String.format("%d", Config.autoApLow));
-			
-			node = (Node) xpath.evaluate("/config/use/strategy/ap/full_low", doc,	XPathConstants.NODE);
+
+			node = (Node) xpath.evaluate("/config/use/strategy/ap/full_low",
+					doc, XPathConstants.NODE);
 			node.setTextContent(String.format("%d", Config.autoApFullLow));
-			
-			node = (Node) xpath.evaluate("/config/use/strategy/ap/half", doc,	XPathConstants.NODE);
+
+			node = (Node) xpath.evaluate("/config/use/strategy/ap/half", doc,
+					XPathConstants.NODE);
 			node.setTextContent(at2s(Config.autoApType));
 
-			node = (Node) xpath.evaluate("/config/use/auto_use_bc", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate("/config/use/auto_use_bc", doc,
+					XPathConstants.NODE);
 			node.setTextContent(b2s(Config.autoUseBc));
 
-			node = (Node) xpath.evaluate("/config/use/strategy/bc/low", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate("/config/use/strategy/bc/low", doc,
+					XPathConstants.NODE);
 			node.setTextContent(String.format("%d", Config.autoBcLow));
-			
-			node = (Node) xpath.evaluate("/config/use/strategy/bc/full_low", doc,	XPathConstants.NODE);
-			node.setTextContent(String.format("%d", Config.autoBcFullLow));
-			
-			node = (Node) xpath.evaluate("/config/use/strategy/bc/half", doc,	XPathConstants.NODE);
-			node.setTextContent(at2s(Config.autoBcType));
-			
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='FairyDeck']/no", doc,	XPathConstants.NODE);
-			node.setTextContent(Config.PrivateFairyBattleNormal.No);
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='FairyDeck']/bc", doc,	XPathConstants.NODE);
-			node.setTextContent(String.format("%d", Config.PrivateFairyBattleNormal.BC));
-			
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='RareFairyDeck']/no", doc,	XPathConstants.NODE);
-			node.setTextContent(Config.PrivateFairyBattleRare.No);
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='RareFairyDeck']/bc", doc,	XPathConstants.NODE);
-			node.setTextContent(String.format("%d", Config.PrivateFairyBattleRare.BC));
-			
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='GuildFairyDeck']/no", doc,	XPathConstants.NODE);
-			node.setTextContent(Config.PublicFairyBattle.No);
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='GuildFairyDeck']/bc", doc,	XPathConstants.NODE);
-			node.setTextContent(String.format("%d", Config.PublicFairyBattle.BC));
-			
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleRare']/no", doc,	XPathConstants.NODE);
-			node.setTextContent(Config.FriendFairyBattleRare.No);
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleRare']/bc", doc,	XPathConstants.NODE);
-			node.setTextContent(String.format("%d", Config.FriendFairyBattleRare.BC));
-			
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleNormal']/no", doc,	XPathConstants.NODE);
-			node.setTextContent(Config.FriendFairyBattleNormal.No);
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='FriendFairyBattleNormal']/bc", doc,	XPathConstants.NODE);
-			node.setTextContent(String.format("%d", Config.FriendFairyBattleNormal.BC));
 
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='LowerBCDeck']/no", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate("/config/use/strategy/bc/full_low",
+					doc, XPathConstants.NODE);
+			node.setTextContent(String.format("%d", Config.autoBcFullLow));
+
+			node = (Node) xpath.evaluate("/config/use/strategy/bc/half", doc,
+					XPathConstants.NODE);
+			node.setTextContent(at2s(Config.autoBcType));
+
+			node = (Node) xpath.evaluate(
+					"/config/deck/deck_profile[name='FairyDeck']/no", doc,
+					XPathConstants.NODE);
+			node.setTextContent(Config.PrivateFairyBattleNormal.No);
+			node = (Node) xpath.evaluate(
+					"/config/deck/deck_profile[name='FairyDeck']/bc", doc,
+					XPathConstants.NODE);
+			node.setTextContent(String.format("%d",
+					Config.PrivateFairyBattleNormal.BC));
+
+			node = (Node) xpath.evaluate(
+					"/config/deck/deck_profile[name='RareFairyDeck']/no", doc,
+					XPathConstants.NODE);
+			node.setTextContent(Config.PrivateFairyBattleRare.No);
+			node = (Node) xpath.evaluate(
+					"/config/deck/deck_profile[name='RareFairyDeck']/bc", doc,
+					XPathConstants.NODE);
+			node.setTextContent(String.format("%d",
+					Config.PrivateFairyBattleRare.BC));
+
+			node = (Node) xpath.evaluate(
+					"/config/deck/deck_profile[name='GuildFairyDeck']/no", doc,
+					XPathConstants.NODE);
+			node.setTextContent(Config.PublicFairyBattle.No);
+			node = (Node) xpath.evaluate(
+					"/config/deck/deck_profile[name='GuildFairyDeck']/bc", doc,
+					XPathConstants.NODE);
+			node.setTextContent(String
+					.format("%d", Config.PublicFairyBattle.BC));
+
+			node = (Node) xpath
+					.evaluate(
+							"/config/deck/deck_profile[name='FriendFairyBattleRare']/no",
+							doc, XPathConstants.NODE);
+			node.setTextContent(Config.FriendFairyBattleRare.No);
+			node = (Node) xpath
+					.evaluate(
+							"/config/deck/deck_profile[name='FriendFairyBattleRare']/bc",
+							doc, XPathConstants.NODE);
+			node.setTextContent(String.format("%d",
+					Config.FriendFairyBattleRare.BC));
+
+			node = (Node) xpath
+					.evaluate(
+							"/config/deck/deck_profile[name='FriendFairyBattleNormal']/no",
+							doc, XPathConstants.NODE);
+			node.setTextContent(Config.FriendFairyBattleNormal.No);
+			node = (Node) xpath
+					.evaluate(
+							"/config/deck/deck_profile[name='FriendFairyBattleNormal']/bc",
+							doc, XPathConstants.NODE);
+			node.setTextContent(String.format("%d",
+					Config.FriendFairyBattleNormal.BC));
+
+			node = (Node) xpath.evaluate(
+					"/config/deck/deck_profile[name='LowerBCDeck']/no", doc,
+					XPathConstants.NODE);
 			node.setTextContent(Config.LowerBCDeck.No);
-			node = (Node) xpath.evaluate("/config/deck/deck_profile[name='LowerBCDeck']/bc", doc,	XPathConstants.NODE);
+			node = (Node) xpath.evaluate(
+					"/config/deck/deck_profile[name='LowerBCDeck']/bc", doc,
+					XPathConstants.NODE);
 			node.setTextContent(String.format("%d", Config.LowerBCDeck.BC));
-			
+
 			TransformerFactory tFactory = TransformerFactory.newInstance();
 			Transformer transformer = tFactory.newTransformer();
 
@@ -367,15 +434,15 @@ public class Config {
 			System.out.println(e.getMessage());
 		}
 	}
-	public static String b2s(boolean b)
-	{
-		if(b)
+
+	public static String b2s(boolean b) {
+		if (b)
 			return "1";
 		else
 			return "0";
 	}
-	public static String at2s(autoUseType aut)
-	{
+
+	public static String at2s(autoUseType aut) {
 		switch (aut) {
 		case FULL_ONLY:
 			return "0";

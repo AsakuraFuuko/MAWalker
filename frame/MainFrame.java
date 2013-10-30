@@ -30,13 +30,15 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.FontUIResource;
-
 import walker.Config;
+import walker.DbFile;
+import walker.GetConfig;
 import walker.Go;
 import walker.Info.EventType;
 import walker.Process;
-import walker.Profile2;
+import walker.SQLiteCRUD;
+import walker.SQLiteConn;
+import javax.swing.JMenuItem;
 
 public class MainFrame extends JFrame {
 
@@ -70,6 +72,8 @@ public class MainFrame extends JFrame {
 	private static JLabel greentea;
 	private static JLabel greentube;
 	private static JLabel todaytube;
+	private static JLabel chaincount;
+	private static JLabel weak;
 
 	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
 		//
@@ -91,11 +95,74 @@ public class MainFrame extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		try {
+		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+		    UIManager.getLookAndFeelDefaults().put("defaultFont", new Font("Tohoma", Font.PLAIN, 12));
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					MainFrame frame = new MainFrame();
 					frame.setVisible(true);
+					Config.dbfile = new DbFile("config.db");
+					Config.sqliteconn = new SQLiteConn(Config.dbfile);
+					Config.sqlitecrud = new SQLiteCRUD(Config.sqliteconn);
+					Config.sqlitecrud
+							.createTable("CREATE TABLE 'config' ("
+									+ "'id'  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+									+ "'username'  TEXT NOT NULL,"
+									+ "'password'  TEXT NOT NULL,"
+									+ "'sessionId'  TEXT,"
+									+ "'user_agent'  TEXT NOT NULL DEFAULT 'Million/236 (t03gchn; t03gzc; 4.1.2) samsung/t03gzc/t03gchn:4.1.2/JZO54K/N7100ZCDMD3:user/release-keys GooglePlay',"
+									+ "'fairy_battle_first'  BOOL NOT NULL DEFAULT false,"
+									+ "'rare_fairy_use_normal_deck'  BOOL NOT NULL DEFAULT false,"
+									+ "'allow_bc_insuffient'  BOOL NOT NULL DEFAULT false,"
+									+ "'one_ap_only'  BOOL NOT NULL DEFAULT true,"
+									+ "'auto_add_point'  BOOL NOT NULL DEFAULT false,"
+									+ "'allow_attack_same_fairy'  BOOL NOT NULL DEFAULT false,"
+									+ "'night_mode'  BOOL NOT NULL DEFAULT true,"
+									+ "'receive_battle_present'  BOOL NOT NULL DEFAULT true,"
+									+ "'guild_battle_percent'  DOUBLE NOT NULL DEFAULT 0.51,"
+									+ "'keep_guild_battle_tickets'  INTEGER NOT NULL DEFAULT 8,"
+									+ "'debug'  BOOL NOT NULL DEFAULT false,"
+									+ "'savelog'  BOOL NOT NULL DEFAULT true,"
+									+ "'auto_use_ap'  BOOL NOT NULL DEFAULT false,"
+									+ "'aplow'  INTEGER NOT NULL DEFAULT 1,"
+									+ "'ap_full_low'  INTEGER NOT NULL DEFAULT 10,"
+									+ "'autoApType'  INTEGER NOT NULL DEFAULT 1,"
+									+ "'auto_use_bc'  BOOL NOT NULL DEFAULT false,"
+									+ "'bclow'  INTEGER NOT NULL DEFAULT 50,"
+									+ "'bc_full_low'  INTEGER NOT NULL DEFAULT 10,"
+									+ "'autoBcType'  INTEGER NOT NULL DEFAULT 1,"
+									+ "'FairyDeckNo'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'FairyDeckBc'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'RareFairyDeckNo'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'RareFairyDeckBc'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'GuildFairyDeckNo'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'GuildFairyDeckBc'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'FriendFairyBattleRareNo'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'FriendFairyBattleRareBc'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'FriendFairyBattleNormalNo'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'FriendFairyBattleNormalBc'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'LowerBCDeckNo'  INTEGER NOT NULL DEFAULT 0,"
+									+ "'LowerBCDeckBc'  INTEGER NOT NULL DEFAULT 0,"
+									+ "CONSTRAINT 'uni' UNIQUE ('username' ASC)"
+									+ ");");
+					Config.sqlitecrud
+							.createTable("CREATE TABLE 'last' ('id'  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'last'  TEXT);");
+					if (Config.sqlitecrud.getTableCount("last") != 0) {
+						String last = Config.sqlitecrud.select("last").get(0)
+								.get(1).toString();
+						GetConfig.fromDB(last);
+						if (!Config.LoginId.isEmpty()) {
+							Go.log(String.format("加载了%s的设置...\n",
+									Config.LoginId));
+						} else {
+							Go.log("请先添加一个用户...");
+						}
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -107,8 +174,8 @@ public class MainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public MainFrame() {
-		setUIFont(new FontUIResource("Tohoma", Font.PLAIN, 12));
-		setTitle("MaWalker");
+		//setUIFont(new FontUIResource("Tohoma", Font.PLAIN, 12));
+		setTitle("MaWalker Gui");
 		setName("MainFrame");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -119,36 +186,41 @@ public class MainFrame extends JFrame {
 		setJMenuBar(menuBar);
 
 		JMenu mnNewMenu = new JMenu("设置");
-		mnNewMenu.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if (arg0.getButton() == MouseEvent.BUTTON1) {
-					OptionDialog od = new OptionDialog();
-					od.setVisible(true);
-					Go.log(String.format("加载了配置文件：%s\n", Go.configFile));
-				}
-			}
-		});
 		mnNewMenu.setDoubleBuffered(true);
 		menuBar.add(mnNewMenu);
 
-		JMenu menu = new JMenu("手动更新信息");
-		menu.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if (arg0.getButton() == MouseEvent.BUTTON1
-						&& BUTTON_1.isEnabled()) {
-					Process.info.events.add(EventType.updateInfo);
-					JOptionPane.showMessageDialog(MainFrame.this,
-							"更新事件已加入队列..");
-				}
+		JMenuItem mntmNewMenuItem = new JMenuItem("用户设置");
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				OptionDialog od = new OptionDialog();
+				od.setVisible(true);
+				Go.log(String.format("加载了%s的设置...\n", Config.LoginId));
 			}
 		});
+		mnNewMenu.add(mntmNewMenuItem);
+
+		JMenu menu = new JMenu("附加0.0");
 		menuBar.add(menu);
 
-		JMenu menu_1 = new JMenu("查看团内成员贡献（不可用）");
-		menu_1.setEnabled(false);
-		menuBar.add(menu_1);
+		JMenuItem mntmNewMenuItem_1 = new JMenuItem("手动更新信息");
+		mntmNewMenuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Process.info.events.add(EventType.updateInfo);
+				JOptionPane
+						.showMessageDialog(MainFrame.this, "更新事件已加入队列..");
+			}
+		});
+		menu.add(mntmNewMenuItem_1);
+
+		JMenuItem mntmNewMenuItem_2 = new JMenuItem("查看团成员贡献");
+		mntmNewMenuItem_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Process.info.events.add(EventType.partyRank);
+				JOptionPane.showMessageDialog(MainFrame.this,
+						"读取团贡事件已加入队列..");
+			}
+		});
+		menu.add(mntmNewMenuItem_2);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -160,6 +232,7 @@ public class MainFrame extends JFrame {
 
 		textField = new JTextField();
 		textField.setEditable(false);
+		textField.setVisible(false);
 		toolBar.add(textField);
 		textField.setColumns(10);
 
@@ -236,17 +309,9 @@ public class MainFrame extends JFrame {
 					public void run() {
 						while (!isExit) {
 							Process proc = new Process();
-							Profile2 prof = new Profile2();
 							while (!isExit) {
 								try {
-									switch (Config.Profile) {
-									case 1:
-										proc.auto();
-										break;
-									case 2:
-										prof.auto();
-										break;
-									}
+									proc.auto();
 								} catch (Exception ex) {
 									Go.log(ex.getMessage());
 									Process.info.events
@@ -254,6 +319,9 @@ public class MainFrame extends JFrame {
 									Go.log("Restart");
 								}
 							}
+							Go.log("已停止...");
+							BUTTON.setEnabled(true);
+							BUTTON_1.setEnabled(false);
 						}
 					}
 				};
@@ -273,10 +341,8 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (td.isAlive()) {
 					isExit = true;
+					Go.log("正在停止...");
 				}
-				Go.log("停止...");
-				BUTTON.setEnabled(true);
-				BUTTON_1.setEnabled(false);
 			}
 		});
 		BUTTON_1.setDoubleBuffered(true);
@@ -317,7 +383,7 @@ public class MainFrame extends JFrame {
 		panel_1.add(label_2);
 
 		guidename = new JLabel("xxxxxxxxxxxx");
-		guidename.setBounds(473, 0, 125, 15);
+		guidename.setBounds(473, 0, 80, 15);
 		panel_1.add(guidename);
 
 		JLabel lblNewLabel_3 = new JLabel("外敌等级");
@@ -396,6 +462,22 @@ public class MainFrame extends JFrame {
 		todaytube.setBounds(351, 75, 45, 15);
 		panel_1.add(todaytube);
 
+		JLabel label_11 = new JLabel("连击数");
+		label_11.setBounds(508, 25, 45, 15);
+		panel_1.add(label_11);
+
+		chaincount = new JLabel("999");
+		chaincount.setBounds(552, 25, 25, 15);
+		panel_1.add(chaincount);
+
+		JLabel label_13 = new JLabel("弱点");
+		label_13.setBounds(567, 0, 24, 15);
+		panel_1.add(label_13);
+
+		weak = new JLabel("未知");
+		weak.setBounds(597, 0, 34, 15);
+		panel_1.add(weak);
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -461,5 +543,8 @@ public class MainFrame extends JFrame {
 		greentube.setText(String.valueOf(Process.info.halfAp));
 		todaytube.setText(String.format("%d红%d绿", Process.info.halfBcToday,
 				Process.info.halfApToday));
+		weak.setText(Process.info.gfairy.weak);
+
+		chaincount.setText(Process.info.gfairy.ChainCounter);
 	}
 }

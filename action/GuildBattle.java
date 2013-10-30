@@ -28,6 +28,7 @@ public class GuildBattle {
 		post.add(new BasicNameValuePair("no", Process.info.gfairy.No));
 		post.add(new BasicNameValuePair("serial_id", Process.info.gfairy.SerialId));
 		post.add(new BasicNameValuePair("spp_skill_serial", Process.info.gfairy.Spp));
+		
 		try {
 			response = Process.network.ConnectToServer(URL_GUILD_BATTLE, post, false);
 		} catch (Exception ex) {
